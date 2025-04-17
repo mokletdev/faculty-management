@@ -5,6 +5,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
 import { db } from "@/server/db";
+import type { UserRole } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -17,14 +18,20 @@ declare module "next-auth" {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
+      role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    role: UserRole;
+  }
+}
+
+declare module "@auth/core/jwt" {
+  interface JWT extends DefaultJWT {
+    id: string;
+    role: UserRole;
+  }
 }
 
 /**
@@ -33,6 +40,7 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
+  session: { strategy: "jwt" },
   providers: [
     Google,
     Credentials({
@@ -62,7 +70,6 @@ export const authConfig = {
           return null;
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
         const isValid = await compare(credentials.password, user.password);
 
         if (!isValid) {
@@ -74,6 +81,7 @@ export const authConfig = {
           email: user.email,
           name: user.name,
           image: user.image,
+          role: user.role,
         };
       },
     }),
@@ -92,12 +100,20 @@ export const authConfig = {
   //   signIn: "/auth/sign-in",
   // },
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    async jwt({ token, user }) {
+      // Only runs on sign-in
+      if (user) {
+        token.role = user.role;
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
+      }
+      return session;
+    },
   },
 } satisfies NextAuthConfig;

@@ -18,7 +18,7 @@ export default async function HomePage() {
               target="_blank"
             >
               <h3 className="text-2xl font-bold">
-                Welcome, {session.user.name}
+                Welcome, {session.user.name} as {session.user.role}
               </h3>
             </Link>
           ) : (
