@@ -12,7 +12,7 @@ const typographyVariants = cva("", {
 
       // Heading styles
       h1: "text-4xl font-bold tracking-tight",
-      h2: "text-3xl font-semibold tracking-tight",
+      h2: "text-4xl font-semibold tracking-tight",
       h3: "text-2xl font-semibold tracking-tight",
       h4: "text-xl font-semibold tracking-tight",
       h5: "text-lg font-semibold tracking-tight",
