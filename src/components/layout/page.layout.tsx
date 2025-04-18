@@ -11,7 +11,7 @@ export const PageContainer = ({
   return (
     <>
       {/* <Navbar /> */}
-      <main className={cn(className)}>{children}</main>
+      <main className={cn("h-full min-h-screen", className)}>{children}</main>
       {/* <Footer /> */}
     </>
   );
