@@ -16,7 +16,19 @@ datasource db {
 
 enum UserRole {
     ADMIN
-    LECTURER
+    DOSEN
+}
+
+enum Priority {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+enum NotificationType {
+    CREATED
+    UPDATED
+    CANCELLED
 }
 
 // Necessary for Next auth
@@ -57,7 +69,10 @@ model User {
     accounts      Account[]
     sessions      Session[]
 
-    role UserRole @default(LECTURER)
+    role           UserRole       @default(DOSEN)
+    createdAgendas Agenda[]       @relation("CreatedBy")
+    agendaAccesses AgendaAccess[] @relation("AgendaAccess")
+    notifications  Notification[]
 }
 
 model VerificationToken {
@@ -66,4 +81,60 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Room {
+    id        String   @id @default(uuid())
+    name      String
+    location  String?
+    agendas   Agenda[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Agenda {
+    id              String   @id @default(uuid())
+    title           String
+    description     String?
+    startTime       DateTime
+    endTime         DateTime
+    priority        Priority
+    roomId          String
+    room            Room     @relation(fields: [roomId], references: [id])
+    createdById     String
+    createdBy       User     @relation("CreatedBy", fields: [createdById], references: [id])
+    googleEventId   String?
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+    accessMahasiswa Boolean  @default(false) // true = Mahasiswa can see it
+    accessAllDosen  Boolean  @default(false) // true = All dosen can see it
+
+    accessDosen   AgendaAccess[]
+    notifications Notification[] // Access to several dosens
+
+    @@unique([startTime, endTime, roomId], name: "no_time_conflict")
+    @@index([startTime, endTime, roomId])
+}
+
+model AgendaAccess {
+    id       String @id @default(uuid())
+    agendaId String
+    userId   String
+    agenda   Agenda @relation(fields: [agendaId], references: [id])
+    user     User   @relation("AgendaAccess", fields: [userId], references: [id])
+
+    @@unique([agendaId, userId])
+}
+
+model Notification {
+    id        String           @id @default(cuid())
+    type      NotificationType
+    message   String
+    isRead    Boolean          @default(false)
+    userId    String
+    agendaId  String?
+    createdAt DateTime         @default(now())
+
+    user   User    @relation(fields: [userId], references: [id])
+    agenda Agenda? @relation(fields: [agendaId], references: [id])
 }
