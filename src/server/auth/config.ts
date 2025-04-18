@@ -1,6 +1,7 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import { type DefaultJWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
@@ -27,7 +28,7 @@ declare module "next-auth" {
   }
 }
 
-declare module "@auth/core/jwt" {
+declare module "next-auth/jwt" {
   interface JWT extends DefaultJWT {
     id: string;
     role: UserRole;
@@ -96,15 +97,15 @@ export const authConfig = {
      */
   ],
   adapter: PrismaAdapter(db),
-  // pages: {
-  //   signIn: "/auth/sign-in",
-  // },
+  pages: {
+    signIn: "/auth/login",
+  },
   callbacks: {
     async jwt({ token, user }) {
       // Only runs on sign-in
       if (user) {
         token.role = user.role;
-        token.id = user.id;
+        token.id = user.id!;
       }
       return token;
     },
