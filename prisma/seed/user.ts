@@ -1,4 +1,5 @@
 import { PrismaClient, type User } from "@prisma/client";
+import { hash } from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 
 const client = new PrismaClient();
@@ -26,7 +27,10 @@ async function main() {
     if (userExists) return console.log(`User ${user.name} already exists`);
 
     await client.user.create({
-      data: user,
+      data: {
+        ...user,
+        password: await hash(user.password || "", 12),
+      },
     });
 
     console.log(`Created User ${user.name}`);
