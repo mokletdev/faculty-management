@@ -42,7 +42,7 @@ export const Forbidden = () => {
             </g>
           </svg>
 
-          <H2 className="text-danger- mt-8 text-center font-bold">
+          <H2 className="text-primary-700 mt-8 text-center font-bold">
             Ups! Anda Tidak Memiliki Akses.
           </H2>
 
