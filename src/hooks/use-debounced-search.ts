@@ -33,7 +33,6 @@ export function useDebouncedSearch<T>(
           const data = await searchFnRef.current(query);
 
           if (isMountedRef.current) {
-            console.log("data: ", data);
             setResults(data);
           }
         } catch (err) {

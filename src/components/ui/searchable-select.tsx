@@ -57,9 +57,8 @@ export function SearchableSelect<T extends SearchResult>({
   const [popoverOpen, setPopoverOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { query, setQuery, results, isLoading } = useDebouncedSearch(
-    (q: string) => searchFunction(q, searchParams),
-  );
+  const { query, setQuery, results, setResults, isLoading } =
+    useDebouncedSearch((q: string) => searchFunction(q, searchParams));
 
   useEffect(() => {
     if (popoverOpen) {
@@ -68,6 +67,16 @@ export function SearchableSelect<T extends SearchResult>({
       }, 0);
     }
   }, [popoverOpen]);
+
+  useEffect(() => {
+    if (results && multiSelect && selectedItems.length > 0) {
+      setResults(
+        results.filter(
+          (result) => !selectedItems.find((item) => item.id === result.id),
+        ),
+      );
+    }
+  }, [isLoading]);
 
   const handleItemClick = (item: T) => {
     if (multiSelect) {
@@ -155,13 +164,13 @@ export function SearchableSelect<T extends SearchResult>({
             : selectedItems.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-accent flex items-center gap-2 rounded-full px-3 py-1 text-sm"
+                  className="bg-primary-800 hover:bg-primary-900 flex items-center gap-2 rounded-full px-3 py-2 text-sm text-white transition-colors duration-300"
                 >
                   <span>{item.display}</span>
                   <button
                     type="button"
                     onClick={() => handleRemoveItem(item.id)}
-                    className="text-muted-foreground hover:text-foreground"
+                    className="text-white"
                   >
                     ×
                   </button>

@@ -1,8 +1,8 @@
-import { Toaster } from "@/components/ui/sonner";
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Open_Sans } from "next/font/google";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Agenda Management System",
@@ -25,8 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${openSans.variable}`}>
       <body>
-        {children}
-        <Toaster />
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

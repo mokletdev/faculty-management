@@ -43,7 +43,7 @@ export function handleActionError(error: unknown) {
 
     return {
       error: {
-        message: "Validation failed",
+        message: "Validasi gagal",
         code: "VALIDATION_ERROR" as const,
         fieldErrors,
       },
@@ -54,7 +54,7 @@ export function handleActionError(error: unknown) {
   console.error("Server action error:", error);
   return {
     error: {
-      message: "An unexpected error occurred",
+      message: "Terjadi kesalahan di server",
       code: "SERVER_ERROR" as const,
     },
   };
