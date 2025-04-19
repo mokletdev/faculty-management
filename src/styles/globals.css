@@ -7,9 +7,7 @@
   --font-sans:
     var(--font-open-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
 
-@theme {
   /* Base Colors */
   --color-black: #0e0e0e;
   --color-white: #ffffff;
@@ -170,7 +168,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply bg-input text-foreground;
   }
 }

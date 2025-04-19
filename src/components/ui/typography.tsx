@@ -83,7 +83,6 @@ const Typography = React.forwardRef<HTMLElement, TypographyProps>(
 
 Typography.displayName = "Typography";
 
-// Preset components for common use cases
 export function Display1(props: Omit<TypographyProps, "variant">) {
   return <Typography variant="display1" {...props} />;
 }
