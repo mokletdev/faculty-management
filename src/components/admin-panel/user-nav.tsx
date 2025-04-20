@@ -72,7 +72,7 @@ export function UserNav() {
           variant="destructive"
           onClick={() => signOut({ redirectTo: "/auth/login" })}
         >
-          <LogOut className="text-muted-foreground mr-3 h-4 w-4" />
+          <LogOut className="mr-3 h-4 w-4 text-red-500" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

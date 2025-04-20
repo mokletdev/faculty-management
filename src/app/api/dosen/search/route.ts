@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q") ?? "";
+  const id = searchParams.get("id") ?? "";
   const session = await auth();
 
   if (session?.user.role !== "ADMIN") {
@@ -21,6 +22,7 @@ export async function GET(request: Request) {
         OR: [
           { name: { contains: query, mode: "insensitive" } },
           { email: { contains: query, mode: "insensitive" } },
+          { id },
         ],
         role: "DOSEN",
       },
