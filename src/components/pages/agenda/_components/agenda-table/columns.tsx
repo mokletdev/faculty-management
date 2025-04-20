@@ -38,6 +38,22 @@ type Agenda = Prisma.AgendaGetPayload<{
 
 export const columns: ColumnDef<Agenda>[] = [
   {
+    id: "index",
+    enableSorting: true,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nomor
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="font-medium">{row.index + 1}</div>,
+  },
+  {
     accessorKey: "title",
     enableSorting: true,
     header: ({ column }) => {

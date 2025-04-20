@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { BodyBase, H2 } from "@/components/ui/typography";
 import { parsePaginationParams } from "@/lib/parse-pagination-params";
 import { getAgendas } from "@/server/retrievers/agenda";
-import { PlusCircle } from "lucide-react";
+import { Calendar, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AgendaTableSkeleton } from "./_components/agenda-table-skeleton";
@@ -39,12 +39,20 @@ export const AgendaOverview = async ({
                 Kelola acara dan aktivitas fakultas
               </BodyBase>
             </div>
-            <Link href="/admin/agenda/new">
-              <Button>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Tambah Agenda
+            <div className="flex items-center gap-x-2">
+              <Button asChild>
+                <Link href="/admin/agenda/new">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Tambah Agenda
+                </Link>
               </Button>
-            </Link>
+              <Button asChild>
+                <Link href="/admin/calendar">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Lihat Kalender
+                </Link>
+              </Button>
+            </div>
           </div>
           <Suspense fallback={<AgendaTableSkeleton />}>
             <AgendaTable agendaData={agendaData} />
