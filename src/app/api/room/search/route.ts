@@ -18,24 +18,8 @@ export async function GET(request: Request) {
     );
   }
 
-  if (start === null || end === null) {
-    console.error("start and end is required.");
-    return NextResponse.json(
-      { error: "start and end is required." },
-      { status: 400 },
-    );
-  }
-
-  const startTime = new Date(start);
-  const endTime = new Date(end);
-
-  if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-    console.error("start and end is invalid.");
-    return NextResponse.json(
-      { error: "start and end is invalid." },
-      { status: 400 },
-    );
-  }
+  const startTime = start ? new Date(start) : null;
+  const endTime = end ? new Date(end) : null;
 
   try {
     const rooms = await db.room.findMany({
@@ -49,20 +33,35 @@ export async function GET(request: Request) {
       take: 10,
     });
 
-    const conflictingRooms = await db.agenda.findMany({
-      where: {
-        NOT: [{ startTime: { gte: endTime } }, { endTime: { lte: startTime } }],
-      },
-      select: {
-        roomId: true,
-      },
-    });
+    if (startTime && endTime) {
+      if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+        console.error("start and end is invalid.");
+        return NextResponse.json(
+          { error: "start and end is invalid." },
+          { status: 400 },
+        );
+      }
 
-    return NextResponse.json(
-      rooms.filter(
-        (room) => !conflictingRooms.find(({ roomId }) => roomId === room.id),
-      ),
-    );
+      const conflictingRooms = await db.agenda.findMany({
+        where: {
+          NOT: [
+            { startTime: { gte: endTime } },
+            { endTime: { lte: startTime } },
+          ],
+        },
+        select: {
+          roomId: true,
+        },
+      });
+
+      return NextResponse.json(
+        rooms.filter(
+          (room) => !conflictingRooms.find(({ roomId }) => roomId === room.id),
+        ),
+      );
+    }
+
+    return NextResponse.json(rooms);
   } catch (error) {
     console.error("Error searching rooms:", error);
     return NextResponse.json(

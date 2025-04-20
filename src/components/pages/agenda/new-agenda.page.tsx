@@ -1,14 +1,9 @@
 import { PageContainer } from "@/components/layout/page.layout";
 import { SectionContainer } from "@/components/layout/section.layout";
 import { BodyLG, H2 } from "@/components/ui/typography";
-import { getDosens, getRooms } from "@/server/retrievers/agenda";
 import { AgendaForm } from "./_components/agenda-form";
 
 export const NewAgenda = async () => {
-  const now = new Date();
-  const rooms = await getRooms();
-  const dosens = await getDosens();
-
   return (
     <PageContainer>
       <SectionContainer>
@@ -22,7 +17,7 @@ export const NewAgenda = async () => {
             </BodyLG>
           </div>
 
-          <AgendaForm rooms={rooms} dosens={dosens} />
+          <AgendaForm />
         </div>
       </SectionContainer>
     </PageContainer>

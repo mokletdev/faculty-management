@@ -2,7 +2,7 @@ import { PageContainer } from "@/components/layout/page.layout";
 import { SectionContainer } from "@/components/layout/section.layout";
 import { AgendaForm } from "@/components/pages/agenda/_components/agenda-form";
 import { BodyLG, H2 } from "@/components/ui/typography";
-import { getAgendaById, getDosens, getRooms } from "@/server/retrievers/agenda";
+import { getAgendaById } from "@/server/retrievers/agenda";
 import { notFound } from "next/navigation";
 
 export const EditAgenda = async ({
@@ -13,8 +13,6 @@ export const EditAgenda = async ({
   const { id } = await params;
 
   const agenda = await getAgendaById(id);
-  const rooms = await getRooms();
-  const dosens = await getDosens();
 
   if (!agenda) {
     notFound();
@@ -31,7 +29,7 @@ export const EditAgenda = async ({
             </BodyLG>
           </div>
 
-          <AgendaForm agenda={agenda} rooms={rooms} dosens={dosens} />
+          <AgendaForm agenda={agenda} />
         </div>
       </SectionContainer>
     </PageContainer>

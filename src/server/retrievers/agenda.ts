@@ -62,7 +62,12 @@ export const getAgendaById = async (id: string) => {
     include: {
       room: true,
       createdBy: true,
-      accessDosen: true,
+      accessDosen: {
+        select: {
+          userId: true,
+          user: { select: { id: true, name: true, email: true } },
+        },
+      },
     },
   });
 };
