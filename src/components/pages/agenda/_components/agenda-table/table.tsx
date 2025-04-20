@@ -121,7 +121,7 @@ export const AgendaTable: FC<{
     <div className="space-y-4">
       <div className="flex flex-col items-start gap-y-4 py-4 md:flex-row md:items-center md:justify-between">
         <Input
-          placeholder="Filter agendas..."
+          placeholder="Cari Agenda..."
           value={searchInput}
           onChange={(event) =>
             event.target.value.trim()

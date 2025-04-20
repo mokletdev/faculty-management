@@ -23,7 +23,7 @@ import { deleteAgenda } from "@/server/actions/agenda";
 import type { Prisma } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { ArrowUpDown, Edit, MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -39,14 +39,35 @@ type Agenda = Prisma.AgendaGetPayload<{
 export const columns: ColumnDef<Agenda>[] = [
   {
     accessorKey: "title",
-    header: "Judul Agenda",
+    enableSorting: true,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Judul Agenda
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => (
       <div className="font-medium">{row.getValue("title")}</div>
     ),
   },
   {
     accessorKey: "startTime",
-    header: "Waktu",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Waktu
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const startTime = row.getValue("startTime") as Date;
       const endTime = row.original.endTime;
@@ -64,6 +85,7 @@ export const columns: ColumnDef<Agenda>[] = [
   {
     accessorKey: "priority",
     header: "Prioritas",
+    enableSorting: true,
     cell: ({ row }) => {
       const priority = row.getValue("priority") as string;
 
@@ -86,6 +108,7 @@ export const columns: ColumnDef<Agenda>[] = [
     accessorKey: "room.name",
     header: "Ruangan",
     cell: ({ row }) => row.original.room.name,
+    enableSorting: true,
   },
   {
     accessorKey: "access",
