@@ -58,15 +58,16 @@ export const AgendaTable: FC<{
   const pageSize = Number(searchParams.get("pageSize") ?? "10");
   const search = searchParams.get("search") ?? "";
 
-  const { query: searchInput, setQuery: setSearchInput } = useDebouncedSearch(
-    async (query) => {
-      router.push(
-        `${pathname}?${createQueryString({ search: query || null, page: 1 })}`,
-      );
-      return [];
-    },
-    1000,
-  );
+  const {
+    query: searchInput,
+    setQuery: setSearchInput,
+    reset: resetSearch,
+  } = useDebouncedSearch(async (query) => {
+    router.push(
+      `${pathname}?${createQueryString({ search: query || null, page: 1 })}`,
+    );
+    return [];
+  }, 1000);
 
   const createQueryString = (
     params: Record<string, string | number | null>,
@@ -122,7 +123,11 @@ export const AgendaTable: FC<{
         <Input
           placeholder="Filter agendas..."
           value={searchInput}
-          onChange={(event) => setSearchInput(event.target.value)}
+          onChange={(event) =>
+            event.target.value.trim()
+              ? setSearchInput(event.target.value)
+              : resetSearch()
+          }
           className="max-w-sm"
         />
         <div className="flex items-center gap-2">

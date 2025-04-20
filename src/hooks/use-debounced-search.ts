@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useDebouncedSearch<T>(
   searchFn: (query: string) => Promise<T[]>,
@@ -60,6 +60,7 @@ export function useDebouncedSearch<T>(
     setResults([]);
     setError(null);
     setIsLoading(false);
+    searchFn("");
   }, []);
 
   return {

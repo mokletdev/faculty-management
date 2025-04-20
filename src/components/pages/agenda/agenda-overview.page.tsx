@@ -33,16 +33,16 @@ export const AgendaOverview = async ({
           <div className="flex flex-col items-start justify-between gap-y-4 md:flex-row md:items-center">
             <div>
               <H2 className="text-primary-800 mb-1 font-bold tracking-tight">
-                Agenda Management
+                Manajemen Agenda
               </H2>
               <BodyBase className="text-neutral-500">
-                Manage faculty events and activities
+                Kelola acara dan aktivitas fakultas
               </BodyBase>
             </div>
             <Link href="/admin/agenda/new">
               <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
-                Add New Agenda
+                Tambah Agenda
               </Button>
             </Link>
           </div>
