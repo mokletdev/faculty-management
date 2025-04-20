@@ -46,7 +46,28 @@
   --color-warning: #ff9900;
   --color-warning-50: #fff7eb;
 
-  /* System Colors */
+  /* shadcn/ui System Colors */
+  --background: var(--color-white);
+  --foreground: var(--color-black);
+  --card: var(--color-white);
+  --card-foreground: var(--color-black);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-black);
+  --primary: var(--color-primary-950);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-neutral-50);
+  --secondary-foreground: var(--color-black);
+  --muted: var(--color-neutral-50);
+  --muted-foreground: var(--color-neutral-500);
+  --accent: var(--color-neutral-50);
+  --accent-foreground: var(--color-black);
+  --destructive: var(--color-danger);
+  --destructive-foreground: var(--color-white);
+  --border: var(--color-neutral-200);
+  --input: var(--color-neutral-200);
+  --ring: var(--color-neutral-400);
+
+  /* Your custom System Colors */
   --color-color-background: var(--color-white);
   --color-foreground: var(--color-black);
   --color-card: var(--color-white);
@@ -67,6 +88,11 @@
   --color-ring: var(--color-neutral-400);
 
   /* Chart Colors */
+  --chart-1: var(--color-primary-600);
+  --chart-2: var(--color-primary-400);
+  --chart-3: var(--color-primary-200);
+  --chart-4: var(--color-success);
+  --chart-5: var(--color-warning);
   --color-chart-1: var(--color-primary-600);
   --color-chart-2: var(--color-primary-400);
   --color-chart-3: var(--color-primary-200);
@@ -74,6 +100,14 @@
   --color-chart-5: var(--color-warning);
 
   /* Sidebar Colors */
+  --sidebar: var(--color-white);
+  --sidebar-foreground: var(--color-black);
+  --sidebar-primary: var(--color-primary-950);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-neutral-50);
+  --sidebar-accent-foreground: var(--color-black);
+  --sidebar-border: var(--color-neutral-200);
+  --sidebar-ring: var(--color-neutral-400);
   --color-sidebar: var(--color-white);
   --color-sidebar-foreground: var(--color-black);
   --color-sidebar-primary: var(--color-primary-950);
@@ -104,6 +138,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
