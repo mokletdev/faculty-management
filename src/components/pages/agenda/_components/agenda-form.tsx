@@ -28,17 +28,26 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { agendaSchema, type AgendaSchema } from "@/lib/validations/agenda";
 import { createAgenda, updateAgenda } from "@/server/actions/agenda";
+import type { RoomSearchResult } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Priority, Prisma, Room, User } from "@prisma/client";
+import type { Priority, Prisma } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 type AgendaFormProps = {
-  agenda?: Prisma.AgendaGetPayload<{ include: { accessDosen: true } }>;
-  rooms: Room[];
-  dosens: User[];
+  agenda?: Prisma.AgendaGetPayload<{
+    include: {
+      room: true;
+      accessDosen: {
+        select: {
+          userId: true;
+          user: { select: { id: true; name: true; email: true } };
+        };
+      };
+    };
+  }>;
 };
 
 type DosenSearchResult = {
@@ -47,16 +56,7 @@ type DosenSearchResult = {
   email: string;
 };
 
-type RoomSearchResult = {
-  id: string;
-  name: string;
-};
-
-export const AgendaForm = ({
-  agenda,
-  rooms = [],
-  dosens = [],
-}: AgendaFormProps) => {
+export const AgendaForm = ({ agenda }: AgendaFormProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -74,10 +74,7 @@ export const AgendaForm = ({
       accessAllDosen: agenda ? agenda.accessAllDosen : false,
       priority: (agenda?.priority as Priority) || "MEDIUM",
       roomId: agenda?.roomId || "",
-      accessDosen:
-        agenda?.accessDosen?.map(
-          (access: { userId: string }) => access.userId,
-        ) || [],
+      accessDosen: agenda?.accessDosen?.map((access) => access.userId) || [],
     } satisfies AgendaSchema,
   });
 
@@ -272,13 +269,15 @@ export const AgendaForm = ({
                           placeholder="Cari ruangan yang tersedia..."
                           searchPlaceholder="Cari ruangan..."
                           value={field.value}
+                          displayValue={
+                            agenda
+                              ? {
+                                  display: agenda.room.name,
+                                  id: agenda.roomId,
+                                }
+                              : undefined
+                          }
                           onChange={field.onChange}
-                          getDisplayValue={() => {
-                            const selectedRoom = rooms.find(
-                              (r) => r.id === field.value,
-                            );
-                            return selectedRoom?.name || "";
-                          }}
                           searchFunction={searchRooms}
                           searchParams={{
                             startTime: form
@@ -358,20 +357,13 @@ export const AgendaForm = ({
                           searchPlaceholder="Cari anggota fakultas..."
                           value={field.value}
                           onChange={field.onChange}
-                          getDisplayValue={() => {
-                            if (
-                              !field.value ||
-                              !Array.isArray(field.value) ||
-                              field.value.length === 0
-                            ) {
-                              return "Cari anggota fakultas...";
-                            }
-                            return `${field.value.length} dosen dipilih, tambah dosen...`;
-                          }}
                           searchFunction={searchDosens}
                           multiSelect={true}
                           selectedItems={
                             field.value?.map((userId) => {
+                              const dosens = agenda!.accessDosen.map(
+                                (dosen) => dosen.user,
+                              );
                               const dosen = dosens.find((d) => d.id === userId);
                               return {
                                 id: userId,

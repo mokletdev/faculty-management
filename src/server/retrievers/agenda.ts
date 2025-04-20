@@ -37,7 +37,7 @@ export const getAgendas = async (
       accessDosen: true,
     },
     orderBy: {
-      startTime: "asc",
+      startTime: "desc",
     },
     skip,
     take: pageSize,
@@ -62,7 +62,12 @@ export const getAgendaById = async (id: string) => {
     include: {
       room: true,
       createdBy: true,
-      accessDosen: true,
+      accessDosen: {
+        select: {
+          userId: true,
+          user: { select: { id: true, name: true, email: true } },
+        },
+      },
     },
   });
 };

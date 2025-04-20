@@ -5,7 +5,7 @@ import { Open_Sans } from "next/font/google";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
-  title: "Agenda Management System",
+  title: "Faculty Agenda Management System Brawijaya University",
   description:
     "Manage agendas and faculty events easily. Sync with Google Calendar.",
   keywords:

@@ -1,11 +1,14 @@
+import { PageContainer } from "@/components/layout/page.layout";
+import { SectionContainer } from "@/components/layout/section.layout";
 import { Button } from "@/components/ui/button";
+import { BodyBase, H2 } from "@/components/ui/typography";
 import { parsePaginationParams } from "@/lib/parse-pagination-params";
 import { getAgendas } from "@/server/retrievers/agenda";
-import { PlusCircle } from "lucide-react";
+import { Calendar, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { AgendaTable } from "./_components/agenda-table";
 import { AgendaTableSkeleton } from "./_components/agenda-table-skeleton";
+import { AgendaTable } from "./_components/agenda-table/table";
 
 export const AgendaOverview = async ({
   searchParams,
@@ -25,21 +28,29 @@ export const AgendaOverview = async ({
 
   return (
     <div className="container mx-auto space-y-6 py-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start justify-between gap-y-4 md:flex-row md:items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Agenda Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage faculty events and activities
-          </p>
+          <H2 className="text-primary-800 mb-1 font-bold tracking-tight">
+            Manajemen Agenda
+          </H2>
+          <BodyBase className="text-neutral-500">
+            Kelola acara dan aktivitas fakultas
+          </BodyBase>
         </div>
-        <Link href="/admin/agenda/new">
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add New Agenda
+        <div className="flex items-center gap-x-2">
+          <Button asChild>
+            <Link href="/admin/agenda/new">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Tambah Agenda
+            </Link>
           </Button>
-        </Link>
+          <Button asChild>
+            <Link href="/admin/calendar">
+              <Calendar className="mr-2 h-4 w-4" />
+              Lihat Kalender
+            </Link>
+          </Button>
+        </div>
       </div>
       <Suspense fallback={<AgendaTableSkeleton />}>
         <AgendaTable agendaData={agendaData} />

@@ -1,3 +1,4 @@
+import AdminPanelLayout from "@/components/admin-panel/admin-panel-layout";
 import { auth } from "@/server/auth";
 import { forbidden } from "next/navigation";
 import type { ReactNode } from "react";
@@ -11,5 +12,5 @@ export default async function AdminLayout({
 
   if (session?.user.role !== "ADMIN") return forbidden();
 
-  return <>{children}</>;
+  return <AdminPanelLayout>{children}</AdminPanelLayout>;
 }
