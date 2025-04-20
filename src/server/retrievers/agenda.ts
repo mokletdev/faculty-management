@@ -37,7 +37,7 @@ export const getAgendas = async (
       accessDosen: true,
     },
     orderBy: {
-      startTime: "asc",
+      startTime: "desc",
     },
     skip,
     take: pageSize,

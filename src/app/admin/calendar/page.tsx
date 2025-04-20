@@ -1,5 +1,5 @@
-import { Calendar } from "@/components/pages/calendar/calendar.page";
+import { AdminCalendar } from "@/components/pages/calendar/admin-calendar.page";
 
-const Page = Calendar;
+const Page = AdminCalendar;
 
 export default Page;

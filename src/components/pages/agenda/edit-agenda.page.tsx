@@ -19,19 +19,15 @@ export const EditAgenda = async ({
   }
 
   return (
-    <PageContainer>
-      <SectionContainer>
-        <div className="flex flex-col items-center text-center">
-          <div className="mb-4 w-fit">
-            <H2 className="text-primary-800 font-bold">Ubah Agenda</H2>
-            <BodyLG className="text-neutral-500">
-              Perbarui detail kegiatan fakultas atau aktivitas.
-            </BodyLG>
-          </div>
+    <div className="flex flex-col items-center text-center">
+      <div className="mb-4 w-fit">
+        <H2 className="text-primary-800 font-bold">Ubah Agenda</H2>
+        <BodyLG className="text-neutral-500">
+          Perbarui detail kegiatan fakultas atau aktivitas.
+        </BodyLG>
+      </div>
 
-          <AgendaForm agenda={agenda} />
-        </div>
-      </SectionContainer>
-    </PageContainer>
+      <AgendaForm agenda={agenda} />
+    </div>
   );
 };

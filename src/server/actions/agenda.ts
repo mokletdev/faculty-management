@@ -74,7 +74,7 @@ export const createAgenda = async (
 
     await createNotifications(agenda.id, "CREATED");
 
-    revalidatePath("/admin/agenda");
+    revalidatePath("/", "layout");
     return { data: agenda };
   } catch (error) {
     return handleActionError(error);
@@ -172,7 +172,7 @@ export const updateAgenda = async (
 
     await createNotifications(agenda.id, "UPDATED");
 
-    revalidatePath("/admin/agenda");
+    revalidatePath("/", "layout");
     return { data: agenda };
   } catch (error) {
     return handleActionError(error);
@@ -207,7 +207,7 @@ export async function deleteAgenda(
       where: { id },
     });
 
-    revalidatePath("/admin/agenda");
+    revalidatePath("/", "layout");
     return { data: existingAgenda };
   } catch (error) {
     return handleActionError(error);

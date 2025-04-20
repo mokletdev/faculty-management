@@ -1,3 +1,5 @@
+import { PageContainer } from "@/components/layout/page.layout";
+import { SectionContainer } from "@/components/layout/section.layout";
 import { auth } from "@/server/auth";
 import { forbidden } from "next/navigation";
 import type { ReactNode } from "react";
@@ -11,5 +13,9 @@ export default async function AdminLayout({
 
   if (session?.user.role !== "ADMIN") return forbidden();
 
-  return <>{children}</>;
+  return (
+    <PageContainer>
+      <SectionContainer>{children}</SectionContainer>
+    </PageContainer>
+  );
 }
