@@ -1,26 +1,6 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -37,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { deleteAgenda } from "@/server/actions/agenda";
+import { useDebouncedSearch } from "@/hooks/use-debounced-search";
 import type { PaginationResult } from "@/types/pagination";
 import type { Prisma } from "@prisma/client";
 import {
@@ -46,43 +26,24 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
-  type ColumnDef,
   type ColumnFiltersState,
   type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
-import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState, type FC } from "react";
-import { toast } from "sonner";
-import { useDebouncedSearch } from "@/hooks/use-debounced-search";
+import { useEffect, useState, type FC } from "react";
+import { columns } from "./columns";
 
-interface Agenda {
-  id: string;
-  title: string;
-  startTime: Date;
-  endTime: Date;
-  priority: string;
-  room: {
-    name: string;
+type Agenda = Prisma.AgendaGetPayload<{
+  include: {
+    room: true;
+    createdBy: true;
+    accessDosen: true;
   };
-  accessMahasiswa: boolean;
-  accessAllDosen: boolean;
-}
+}>;
 
-// Update the AgendaTable component to handle server-side pagination
 export const AgendaTable: FC<{
-  agendaData: PaginationResult<
-    Prisma.AgendaGetPayload<{
-      include: {
-        room: true;
-        createdBy: true;
-        accessDosen: true;
-      };
-    }>
-  >;
+  agendaData: PaginationResult<Agenda>;
 }> = ({ agendaData }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -137,143 +98,9 @@ export const AgendaTable: FC<{
     setSearchInput(search);
   }, [search, setSearchInput]);
 
-  const columns: ColumnDef<Agenda>[] = [
-    {
-      accessorKey: "title",
-      header: "Agenda Title",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("title")}</div>
-      ),
-    },
-    {
-      accessorKey: "startTime",
-      header: "Date & Time",
-      cell: ({ row }) => {
-        const startTime = row.getValue("startTime") as Date;
-        const endTime = row.original.endTime;
-
-        return (
-          <div className="flex flex-col">
-            <div>{format(startTime, "dd MMM yyyy")}</div>
-            <div className="text-muted-foreground">
-              {format(startTime, "HH:mm")} - {format(endTime, "HH:mm")}
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "priority",
-      header: "Priority",
-      cell: ({ row }) => {
-        const priority = row.getValue("priority") as string;
-
-        return (
-          <Badge
-            variant={
-              priority === "HIGH"
-                ? "destructive"
-                : priority === "MEDIUM"
-                  ? "default"
-                  : "secondary"
-            }
-          >
-            {priority}
-          </Badge>
-        );
-      },
-    },
-    {
-      accessorKey: "room.name",
-      header: "Room",
-      cell: ({ row }) => row.original.room.name,
-    },
-    {
-      accessorKey: "access",
-      header: "Access",
-      cell: ({ row }) => {
-        const accessMahasiswa = row.original.accessMahasiswa;
-        const accessAllDosen = row.original.accessAllDosen;
-
-        return (
-          <div className="flex flex-wrap gap-1">
-            {accessMahasiswa && <Badge variant="outline">Mahasiswa</Badge>}
-            {accessAllDosen && <Badge variant="outline">All Dosen</Badge>}
-            {!accessMahasiswa && !accessAllDosen && (
-              <Badge variant="outline">Limited</Badge>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => {
-        const agenda = row.original;
-
-        return (
-          <AlertDialog>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href={`/admin/agenda/${agenda.id}/edit`}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                  </Link>
-                </DropdownMenuItem>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem className="text-destructive">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  agenda and remove it from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={async () => {
-                    try {
-                      await deleteAgenda(agenda.id);
-                      toast.success("Agenda deleted successfully");
-                      router.refresh();
-                    } catch (error) {
-                      console.error(error);
-                      toast.error("Failed to delete the agenda");
-                    }
-                  }}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        );
-      },
-    },
-  ];
-
   const table = useReactTable({
     data: agendaData.data,
-    columns,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -287,19 +114,18 @@ export const AgendaTable: FC<{
       columnVisibility,
       rowSelection,
     },
-    // Remove getPaginationRowModel since we're handling pagination on the server
   });
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center py-4">
+      <div className="flex flex-col items-start gap-y-4 py-4 md:flex-row md:items-center md:justify-between">
         <Input
           placeholder="Filter agendas..."
           value={searchInput}
           onChange={(event) => setSearchInput(event.target.value)}
           className="max-w-sm"
         />
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Select
             value={String(pageSize)}
             onValueChange={(value) => handlePageSizeChange(Number(value))}
@@ -317,7 +143,7 @@ export const AgendaTable: FC<{
         </div>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
