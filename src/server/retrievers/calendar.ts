@@ -1,4 +1,4 @@
-import { Prisma, UserRole } from "@prisma/client";
+import { type Prisma, UserRole } from "@prisma/client";
 import { db } from "../db";
 
 /**
@@ -92,8 +92,8 @@ export const getUserAgendas = async (
       },
     },
     orderBy: { startTime: "asc" },
-    skip: options?.offset || 0,
-    take: options?.limit || 50,
+    skip: options?.offset ?? 0,
+    take: options?.limit ?? 50,
   });
 
   return agendas;

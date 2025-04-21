@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export function AgendaTableSkeleton() {
+export function TableSkeleton() {
   return (
     <div className="space-y-4">
       <div className="flex items-center py-4">

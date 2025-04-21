@@ -96,7 +96,7 @@ export const authConfig = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  adapter: PrismaAdapter(db),
+  adapter: PrismaAdapter(db) as any,
   pages: {
     signIn: "/auth/login",
   },
@@ -111,7 +111,7 @@ export const authConfig = {
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string;
+        session.user.id = token.id;
         session.user.role = token.role as UserRole;
       }
       return session;

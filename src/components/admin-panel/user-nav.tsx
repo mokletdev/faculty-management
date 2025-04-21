@@ -35,7 +35,7 @@ export function UserNav() {
                 className="relative h-8 w-8 rounded-full"
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={session?.user.image || "#"} alt="Avatar" />
+                  <AvatarImage src={session?.user.image ?? "#"} alt="Avatar" />
                   <AvatarFallback className="bg-transparent">
                     {session?.user.name?.slice(0, 2)}
                   </AvatarFallback>
@@ -50,7 +50,7 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm leading-none font-medium">
-              {session?.user.name || "Unknown"}
+              {session?.user.name ?? "Unknown"}
             </p>
             <p className="text-muted-foreground text-xs leading-none">
               {session?.user.email}
@@ -60,9 +60,12 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/admin" className="flex items-center">
+            <Link
+              href={`/admin/user/${session?.user.id}`}
+              className="flex items-center"
+            >
               <LayoutGrid className="text-muted-foreground mr-3 h-4 w-4" />
-              Dashboard
+              Profil
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -70,7 +73,11 @@ export function UserNav() {
         <DropdownMenuItem
           className="hover:cursor-pointer"
           variant="destructive"
-          onClick={() => signOut({ redirectTo: "/auth/login" })}
+          onClick={() =>
+            signOut({ redirectTo: "/auth/login" }).catch((err) =>
+              console.error(err),
+            )
+          }
         >
           <LogOut className="mr-3 h-4 w-4 text-red-500" />
           Sign out

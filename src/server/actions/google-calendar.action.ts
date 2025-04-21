@@ -50,7 +50,7 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
     // Create the event object
     const event = {
       summary: agenda.title,
-      description: agenda.description || "",
+      description: agenda.description ?? "",
       location: `Room: ${agenda.room.name}${agenda.room.location ? `, ${agenda.room.location}` : ""}`,
       start: {
         dateTime: agenda.startTime.toISOString(),
@@ -89,7 +89,7 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
     return response.data.id;
   } catch (error: any) {
     const errorMessage =
-      error.response?.data?.error?.message || error.message || "Unknown error";
+      error.response?.data?.error?.message ?? error.message ?? "Unknown error";
     console.error(
       `Failed to create Google Calendar event for agenda ${agenda.id}: ${errorMessage}`,
       {
@@ -117,7 +117,7 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
     });
 
     // Log the failed operation
-    await logSync(agenda.id, "create", "FAILED", errorMessage);
+    await logSync(agenda.id, "create", "FAILED", errorMessage as string);
 
     throw new GoogleCalendarError(
       `Failed to create Google Calendar event: ${errorMessage}`,
@@ -153,7 +153,7 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
     // Create the event object for update
     const event = {
       summary: agenda.title,
-      description: agenda.description || "",
+      description: agenda.description ?? "",
       location: `Room: ${agenda.room.name}${agenda.room.location ? `, ${agenda.room.location}` : ""}`,
       start: {
         dateTime: agenda.startTime.toISOString(),
@@ -192,7 +192,7 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
     return agenda.googleEventId;
   } catch (error: any) {
     const errorMessage =
-      error.response?.data?.error?.message || error.message || "Unknown error";
+      error.response?.data?.error?.message ?? error.message ?? "Unknown error";
     console.error(
       `Failed to update Google Calendar event for agenda ${agenda.id}: ${errorMessage}`,
       {
@@ -225,7 +225,7 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
           agenda.id,
           "update-recreate",
           "FAILED",
-          (createError as any).message,
+          (createError as { message: string }).message,
         );
 
         throw new GoogleCalendarError(
@@ -256,7 +256,7 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
     });
 
     // Log the failed operation
-    await logSync(agenda.id, "update", "FAILED", errorMessage);
+    await logSync(agenda.id, "update", "FAILED", errorMessage as string);
 
     throw new GoogleCalendarError(
       `Failed to update Google Calendar event: ${errorMessage}`,
@@ -304,7 +304,7 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
     await logSync(agenda.id, "delete", "SUCCESS");
   } catch (error: any) {
     const errorMessage =
-      error.response?.data?.error?.message || error.message || "Unknown error";
+      error.response?.data?.error?.message ?? error.message ?? "Unknown error";
     console.error(
       `Failed to delete Google Calendar event for agenda ${agenda.id}: ${errorMessage}`,
       {
@@ -339,7 +339,7 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
           agenda.id,
           "delete-db-update",
           "FAILED",
-          (dbError as any).message,
+          (dbError as { message: string }).message,
         );
       }
     } else {
@@ -362,12 +362,12 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
           agenda.id,
           "delete-db-update",
           "FAILED",
-          (dbError as any).message,
+          (dbError as { message: string }).message,
         );
       }
 
       // Log the failed operation
-      await logSync(agenda.id, "delete", "FAILED", errorMessage);
+      await logSync(agenda.id, "delete", "FAILED", errorMessage as string);
 
       throw new GoogleCalendarError(
         `Failed to delete Google Calendar event: ${errorMessage}`,
@@ -420,7 +420,12 @@ export const retrySyncFailures = async (limit = 10): Promise<number> => {
       successCount++;
     } catch (error: any) {
       console.error(`Retry failed for agenda ${agenda.id}:`, error.message);
-      await logSync(agenda.id, "retry", "FAILED", error.message);
+      await logSync(
+        agenda.id,
+        "retry",
+        "FAILED",
+        (error as { message: string }).message,
+      );
     }
   }
 

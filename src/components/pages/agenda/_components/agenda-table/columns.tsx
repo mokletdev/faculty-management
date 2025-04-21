@@ -19,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteAgenda } from "@/server/actions/agenda";
+import { deleteAgenda } from "@/server/actions/agenda.action";
 import type { Prisma } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -40,6 +40,7 @@ export const columns: ColumnDef<Agenda>[] = [
   {
     id: "index",
     enableSorting: true,
+    accessorFn: (_, index) => index + 1,
     header: ({ column }) => {
       return (
         <Button
@@ -85,7 +86,7 @@ export const columns: ColumnDef<Agenda>[] = [
       );
     },
     cell: ({ row }) => {
-      const startTime = row.getValue("startTime") as Date;
+      const startTime: Date = row.getValue("startTime");
       const endTime = row.original.endTime;
 
       return (
@@ -103,7 +104,7 @@ export const columns: ColumnDef<Agenda>[] = [
     header: "Prioritas",
     enableSorting: true,
     cell: ({ row }) => {
-      const priority = row.getValue("priority") as string;
+      const priority: string = row.getValue("priority");
 
       return (
         <Badge

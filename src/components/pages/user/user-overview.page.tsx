@@ -2,13 +2,13 @@ import { TableSkeleton } from "@/components/skeletons/table-skeleton";
 import { Button } from "@/components/ui/button";
 import { BodyBase, H2 } from "@/components/ui/typography";
 import { parsePaginationParams } from "@/lib/parse-pagination-params";
-import { getAgendas } from "@/server/retrievers/agenda";
-import { Calendar, PlusCircle } from "lucide-react";
+import { getUsers } from "@/server/retrievers/user";
+import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { AgendaTable } from "./_components/agenda-table/table";
+import { UserTable } from "./_components/user-table/table";
 
-export const AgendaOverview = async ({
+export const UserOverview = async ({
   searchParams,
 }: {
   searchParams: Promise<{
@@ -18,7 +18,7 @@ export const AgendaOverview = async ({
   }>;
 }) => {
   const { page, pageSize, search } = parsePaginationParams(await searchParams);
-  const agendaData = await getAgendas(
+  const userData = await getUsers(
     page ?? undefined,
     pageSize ?? undefined,
     search,
@@ -29,29 +29,21 @@ export const AgendaOverview = async ({
       <div className="flex flex-col items-start justify-between gap-y-4 md:flex-row md:items-center">
         <div>
           <H2 className="text-primary-800 mb-1 font-bold tracking-tight">
-            Manajemen Agenda
+            Manajemen Akun
           </H2>
           <BodyBase className="text-neutral-500">
-            Kelola acara dan aktivitas fakultas
+            Kelola pengguna yang terdaftar di aplikasi FEMS.
           </BodyBase>
         </div>
-        <div className="flex items-center gap-x-2">
-          <Button asChild>
-            <Link href="/admin/agenda/new">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Tambah Agenda
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link href="/admin/calendar">
-              <Calendar className="mr-2 h-4 w-4" />
-              Lihat Kalender
-            </Link>
-          </Button>
-        </div>
+        <Button asChild>
+          <Link href="/admin/user/new">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Tambah Akun
+          </Link>
+        </Button>
       </div>
       <Suspense fallback={<TableSkeleton />}>
-        <AgendaTable agendaData={agendaData} />
+        <UserTable userData={userData} />
       </Suspense>
     </div>
   );
