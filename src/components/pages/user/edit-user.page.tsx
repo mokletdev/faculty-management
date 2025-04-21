@@ -1,31 +1,31 @@
-import { AgendaForm } from "@/components/pages/agenda/_components/agenda-form";
 import { BodyLG, H2 } from "@/components/ui/typography";
-import { getAgendaById } from "@/server/retrievers/agenda";
+import { getUserById } from "@/server/retrievers/user";
 import { notFound } from "next/navigation";
+import { UserForm } from "./_components/user-form";
 
-export const EditAgenda = async ({
+export const EditUser = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
 
-  const agenda = await getAgendaById(id);
+  const user = await getUserById(id);
 
-  if (!agenda) {
+  if (!user) {
     notFound();
   }
 
   return (
     <div className="flex flex-col items-center text-center">
       <div className="mb-4 w-fit">
-        <H2 className="text-primary-800 font-bold">Ubah Agenda</H2>
+        <H2 className="text-primary-800 font-bold">Ubah Pengguna</H2>
         <BodyLG className="text-neutral-500">
-          Perbarui detail kegiatan fakultas atau aktivitas.
+          Perbarui detail akun pengguna yang telah dibuat.
         </BodyLG>
       </div>
 
-      <AgendaForm agenda={agenda} />
+      <UserForm user={user} />
     </div>
   );
 };
