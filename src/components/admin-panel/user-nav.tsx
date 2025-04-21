@@ -60,9 +60,12 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/admin" className="flex items-center">
+            <Link
+              href={`/admin/user/${session?.user.id}`}
+              className="flex items-center"
+            >
               <LayoutGrid className="text-muted-foreground mr-3 h-4 w-4" />
-              Dashboard
+              Profil
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
