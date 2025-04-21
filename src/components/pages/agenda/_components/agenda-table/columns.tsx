@@ -19,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteAgenda } from "@/server/actions/agenda";
+import { deleteAgenda } from "@/server/actions/agenda.action";
 import type { Prisma } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";

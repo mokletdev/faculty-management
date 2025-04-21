@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteUser } from "@/server/actions/user";
+import { deleteUser } from "@/server/actions/user.action";
 import type { Prisma } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
 import {

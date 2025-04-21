@@ -15,7 +15,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { BodyLG, H2 } from "@/components/ui/typography";
-import { signInSchema, type SignInFormData } from "@/lib/validations/auth";
+import {
+  signInSchema,
+  type SignInFormData,
+} from "@/lib/validations/auth.validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeClosed, EyeIcon, UserIcon } from "lucide-react";
 import { signIn, type SignInResponse } from "next-auth/react";

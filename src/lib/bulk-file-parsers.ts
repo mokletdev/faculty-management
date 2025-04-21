@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
-import type { BulkUserData } from "./validations/user";
+import type { BulkUserData } from "./validations/user.validator";
 
 export const parseCSV = async (file: File): Promise<BulkUserData[]> => {
   return new Promise((resolve, reject) => {

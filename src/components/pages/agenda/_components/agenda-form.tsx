@@ -26,8 +26,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { agendaSchema, type AgendaSchema } from "@/lib/validations/agenda";
-import { createAgenda, updateAgenda } from "@/server/actions/agenda";
+import {
+  agendaSchema,
+  type AgendaSchema,
+} from "@/lib/validations/agenda.validator";
+import { createAgenda, updateAgenda } from "@/server/actions/agenda.action";
 import type { RoomSearchResult } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Priority, Prisma } from "@prisma/client";

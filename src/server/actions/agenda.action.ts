@@ -1,7 +1,10 @@
 "use server";
 
 import { ActionError, handleActionError } from "@/lib/exceptions";
-import { agendaSchema, type AgendaSchema } from "@/lib/validations/agenda";
+import {
+  agendaSchema,
+  type AgendaSchema,
+} from "@/lib/validations/agenda.validator";
 import type { ActionResponse } from "@/types";
 import type { Agenda } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -11,7 +14,7 @@ import {
   createGoogleCalendarEvent,
   deleteGoogleCalendarEvent,
   updateGoogleCalendarEvent,
-} from "./google-calendar";
+} from "./google-calendar.action";
 
 export const createAgenda = async (
   formData: AgendaSchema,

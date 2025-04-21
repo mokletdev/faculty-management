@@ -33,7 +33,7 @@ import {
 import { H2 } from "@/components/ui/typography";
 import type { AgendaWithRoom, FilterOptions, RoomSearchResult } from "@/types";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./calendar.css";
+import "@/styles/calendar.css";
 
 const localizer = momentLocalizer(moment);
 

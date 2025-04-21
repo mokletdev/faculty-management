@@ -17,8 +17,11 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { parseCSV, parseExcel } from "@/lib/bulk-file-parsers";
-import { validateUserData, type BulkUserData } from "@/lib/validations/user";
-import { bulkCreateUsers } from "@/server/actions/user";
+import {
+  validateUserData,
+  type BulkUserData,
+} from "@/lib/validations/user.validator";
+import { bulkCreateUsers } from "@/server/actions/user.action";
 import type { BulkCreateResult } from "@/types";
 import { AlertCircle, Download, FileSpreadsheet, Upload } from "lucide-react";
 import { useState } from "react";

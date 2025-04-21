@@ -6,7 +6,7 @@ import {
   type BulkUserData,
   type CreateUserSchema,
   type UpdateUserSchema,
-} from "@/lib/validations/user";
+} from "@/lib/validations/user.validator";
 import type { ActionResponse } from "@/types";
 import { hash } from "bcryptjs";
 import { revalidatePath } from "next/cache";

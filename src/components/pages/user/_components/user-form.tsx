@@ -24,8 +24,8 @@ import {
   updateUserSchema,
   type CreateUserSchema,
   type UpdateUserSchema,
-} from "@/lib/validations/user";
-import { createUser, updateUser } from "@/server/actions/user";
+} from "@/lib/validations/user.validator";
+import { createUser, updateUser } from "@/server/actions/user.action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Prisma, UserRole } from "@prisma/client";
 import { useRouter } from "next/navigation";
