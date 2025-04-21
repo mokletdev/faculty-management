@@ -41,11 +41,11 @@ export const LoginPage = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      const result = (await signIn("credentials", {
+      const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
         redirect: false,
-      })) as SignInResponse;
+      });
 
       if (result?.error) {
         toast.error("Invalid email or password");
