@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useDebouncedSearch<T>(
   searchFn: (query: string) => Promise<T[]>,
-  delay: number = 300,
+  delay = 300,
 ) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<T[]>([]);
@@ -25,31 +25,33 @@ export function useDebouncedSearch<T>(
   useEffect(() => {
     setError(null);
 
-    const timer = setTimeout(async () => {
-      if (query.trim()) {
-        setIsLoading(true);
+    const timer = setTimeout(() => {
+      (async () => {
+        if (query.trim()) {
+          setIsLoading(true);
 
-        try {
-          const data = await searchFnRef.current(query);
+          try {
+            const data = await searchFnRef.current(query);
 
-          if (isMountedRef.current) {
-            setResults(data);
-          }
-        } catch (err) {
-          console.error("Search error:", err);
+            if (isMountedRef.current) {
+              setResults(data);
+            }
+          } catch (err) {
+            console.error("Search error:", err);
 
-          if (isMountedRef.current) {
-            setResults([]);
-            setError(err instanceof Error ? err : new Error(String(err)));
+            if (isMountedRef.current) {
+              setResults([]);
+              setError(err instanceof Error ? err : new Error(String(err)));
+            }
+          } finally {
+            if (isMountedRef.current) {
+              setIsLoading(false);
+            }
           }
-        } finally {
-          if (isMountedRef.current) {
-            setIsLoading(false);
-          }
+        } else {
+          setResults([]);
         }
-      } else {
-        setResults([]);
-      }
+      })().catch((err) => console.error(err));
     }, delay);
 
     return () => clearTimeout(timer);
@@ -60,7 +62,7 @@ export function useDebouncedSearch<T>(
     setResults([]);
     setError(null);
     setIsLoading(false);
-    searchFn("");
+    searchFn("").catch((err) => console.error(err));
   }, []);
 
   return {

@@ -35,9 +35,7 @@ export function handleActionError(error: unknown) {
 
     zodError.errors.forEach((err) => {
       const field = err.path.join(".");
-      if (!fieldErrors[field]) {
-        fieldErrors[field] = [];
-      }
+      fieldErrors[field] ??= [];
       fieldErrors[field].push(err.message);
     });
 

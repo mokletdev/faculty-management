@@ -41,7 +41,7 @@ export async function createUser(
         email: validatedData.email,
         password: hashedPassword,
         role: validatedData.role,
-        image: validatedData.image || null,
+        image: validatedData.image ?? null,
       },
     });
 
@@ -98,7 +98,7 @@ export async function updateUser(
       name: validatedData.name,
       email: validatedData.email,
       role: validatedData.role,
-      image: validatedData.image || null,
+      image: validatedData.image ?? null,
     };
 
     // Only update password if provided and not empty
@@ -217,7 +217,7 @@ export const bulkCreateUsers = async (
           email: user.email,
           password: hashedPassword,
           role: user.role,
-          image: user.image || null,
+          image: user.image ?? null,
         },
       });
 

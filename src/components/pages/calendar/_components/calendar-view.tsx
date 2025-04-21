@@ -178,7 +178,7 @@ export const CalendarView = () => {
   };
 
   useEffect(() => {
-    fetchAgendas();
+    fetchAgendas().catch((err) => console.error(err));
   }, [date, view, filters]);
 
   const events = useMemo(
@@ -259,7 +259,7 @@ export const CalendarView = () => {
   };
 
   const handleRefresh = () => {
-    fetchAgendas();
+    fetchAgendas().catch((err) => console.error(err));
   };
 
   const CustomToolbar = ({ label, onNavigate, onView }: any) => {
@@ -349,7 +349,7 @@ export const CalendarView = () => {
           <div className="animate-in fade-in-0 slide-in-from-top-5 mt-10 grid grid-cols-1 gap-3 rounded-lg border border-neutral-200 bg-white p-4 duration-300 md:grid-cols-3">
             <div>
               <Select
-                value={filters.priority || "all"}
+                value={filters.priority ?? "all"}
                 onValueChange={handlePriorityChange}
               >
                 <SelectTrigger className="w-full">

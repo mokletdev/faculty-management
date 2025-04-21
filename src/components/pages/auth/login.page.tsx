@@ -185,7 +185,9 @@ export const LoginPage = () => {
                 variant="outline"
                 className="w-full"
                 onClick={() => {
-                  signIn("google", { redirect: true, redirectTo: "/" });
+                  signIn("google", { redirect: true, redirectTo: "/" }).catch(
+                    (err) => console.error(err),
+                  );
                 }}
               >
                 <svg

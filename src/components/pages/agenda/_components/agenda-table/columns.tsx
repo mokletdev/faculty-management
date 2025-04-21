@@ -86,7 +86,7 @@ export const columns: ColumnDef<Agenda>[] = [
       );
     },
     cell: ({ row }) => {
-      const startTime = row.getValue("startTime") as Date;
+      const startTime: Date = row.getValue("startTime");
       const endTime = row.original.endTime;
 
       return (
@@ -104,7 +104,7 @@ export const columns: ColumnDef<Agenda>[] = [
     header: "Prioritas",
     enableSorting: true,
     cell: ({ row }) => {
-      const priority = row.getValue("priority") as string;
+      const priority: string = row.getValue("priority");
 
       return (
         <Badge

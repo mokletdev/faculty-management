@@ -33,7 +33,7 @@ import {
 import { createAgenda, updateAgenda } from "@/server/actions/agenda.action";
 import type { RoomSearchResult } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Priority, Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -66,8 +66,8 @@ export const AgendaForm = ({ agenda }: AgendaFormProps) => {
   const form = useForm<AgendaSchema>({
     resolver: zodResolver(agendaSchema),
     defaultValues: {
-      title: agenda?.title || "",
-      description: agenda?.description || "",
+      title: agenda?.title ?? "",
+      description: agenda?.description ?? "",
       startTime: agenda ? new Date(agenda.startTime) : new Date(),
       endTime: agenda
         ? new Date(agenda.endTime)
@@ -75,9 +75,9 @@ export const AgendaForm = ({ agenda }: AgendaFormProps) => {
           new Date(Date.now() + 60 * 60 * 1000),
       accessMahasiswa: agenda ? agenda.accessMahasiswa : false,
       accessAllDosen: agenda ? agenda.accessAllDosen : false,
-      priority: (agenda?.priority as Priority) || "MEDIUM",
-      roomId: agenda?.roomId || "",
-      accessDosen: agenda?.accessDosen?.map((access) => access.userId) || [],
+      priority: agenda?.priority ?? "MEDIUM",
+      roomId: agenda?.roomId ?? "",
+      accessDosen: agenda?.accessDosen?.map((access) => access.userId) ?? [],
     } satisfies AgendaSchema,
   });
 
@@ -198,7 +198,7 @@ export const AgendaForm = ({ agenda }: AgendaFormProps) => {
                       placeholder="Masukkan deskripsi agenda"
                       className="min-h-[100px]"
                       {...field}
-                      value={field.value || ""}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -367,7 +367,7 @@ export const AgendaForm = ({ agenda }: AgendaFormProps) => {
                           multiSelect={true}
                           initialSelectedItems={
                             agenda?.accessDosen
-                              ? field.value?.map((userId) => {
+                              ? (field.value?.map((userId) => {
                                   const dosens = agenda.accessDosen.map(
                                     (dosen) => dosen.user,
                                   );
@@ -379,7 +379,7 @@ export const AgendaForm = ({ agenda }: AgendaFormProps) => {
                                     id: userId,
                                     display: `${dosen.name ?? "Unknown"} (${dosen.email ?? "unknown"})`,
                                   };
-                                }) || []
+                                }) ?? [])
                               : []
                           }
                         />

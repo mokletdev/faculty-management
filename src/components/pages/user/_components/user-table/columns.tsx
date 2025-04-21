@@ -79,8 +79,8 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const name = row.getValue("name") as string | null;
-      return <div>{name || "N/A"}</div>;
+      const name: string | null = row.getValue("name");
+      return <div>{name ?? "N/A"}</div>;
     },
   },
   {
@@ -98,13 +98,13 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const email = row.getValue("email") as string | null;
+      const email: string | null = row.getValue("email");
       const { data: session } = useSession();
       const isCurrentUser = session?.user.id === row.original.id;
 
       return (
         <div>
-          {email || "N/A"}{" "}
+          {email ?? "N/A"}{" "}
           {isCurrentUser && (
             <span className="text-primary-800">(Your Account)</span>
           )}
@@ -116,7 +116,7 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => {
-      const role = row.getValue("role") as string;
+      const role: string = row.getValue("role");
       return (
         <Badge variant={role === "ADMIN" ? "default" : "secondary"}>
           {role}
@@ -196,7 +196,7 @@ export const columns: ColumnDef<User>[] = [
                 <DialogTitle>Hapus User</DialogTitle>
                 <DialogDescription>
                   Apakah Anda yakin ingin menghapus user{" "}
-                  <span className="font-medium">{user.name || user.email}</span>
+                  <span className="font-medium">{user.name ?? user.email}</span>
                   ? Tindakan ini tidak dapat dibatalkan.
                 </DialogDescription>
               </DialogHeader>
