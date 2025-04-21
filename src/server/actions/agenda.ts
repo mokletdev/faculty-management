@@ -2,6 +2,7 @@
 
 import { ActionError, handleActionError } from "@/lib/exceptions";
 import { agendaSchema, type AgendaSchema } from "@/lib/validations/agenda";
+import type { ActionResponse } from "@/types";
 import type { Agenda } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
@@ -12,18 +13,9 @@ import {
   updateGoogleCalendarEvent,
 } from "./google-calendar";
 
-export type AgendaResponse<T> = {
-  data?: T;
-  error?: {
-    message: string;
-    code: string;
-    fieldErrors?: Record<string, string[]>;
-  };
-};
-
 export const createAgenda = async (
   formData: AgendaSchema,
-): Promise<AgendaResponse<Agenda>> => {
+): Promise<ActionResponse<Agenda>> => {
   try {
     const validatedFields = agendaSchema.parse(formData);
 
@@ -98,7 +90,7 @@ export const createAgenda = async (
 export const updateAgenda = async (
   id: string,
   formData: AgendaSchema,
-): Promise<AgendaResponse<Agenda>> => {
+): Promise<ActionResponse<Agenda>> => {
   try {
     const validatedFields = agendaSchema.parse(formData);
 
@@ -201,7 +193,7 @@ export const updateAgenda = async (
 
 export async function deleteAgenda(
   id: string,
-): Promise<AgendaResponse<Agenda>> {
+): Promise<ActionResponse<Agenda>> {
   try {
     const session = await auth();
     if (!session) {
