@@ -34,34 +34,28 @@ type BaseSearchableSelectProps<T extends SearchResult> = {
   ) => React.ReactNode;
   disabled?: boolean;
   className?: string;
+  initialSelectedItems?: T[]; // Add initialSelectedItems for initialization
 };
 
-// Define props specifically for single-select mode (string value)
 type SingleSelectProps<T extends SearchResult> =
   BaseSearchableSelectProps<T> & {
     value: string;
     displayValue?: SearchResult; // Required when value is a string
     multiSelect?: false;
-    selectedItems?: T[];
   };
 
-// Define props specifically for multi-select mode (string[] value)
 type MultiSelectProps<T extends SearchResult> = BaseSearchableSelectProps<T> & {
   value: string[];
   displayValue?: never; // Not used in multi-select mode
   multiSelect: true;
-  selectedItems: T[]; // Required in multi-select mode
 };
 
-// Define props for empty/null value case
 type EmptyValueProps<T extends SearchResult> = BaseSearchableSelectProps<T> & {
   value: null | undefined;
   displayValue?: SearchResult; // Optional when value is null/undefined
   multiSelect?: boolean;
-  selectedItems?: T[];
 };
 
-// Combine these into a union type
 export type SearchableSelectProps<T extends SearchResult> =
   | SingleSelectProps<T>
   | MultiSelectProps<T>
@@ -76,7 +70,7 @@ export function SearchableSelect<T extends SearchResult>({
   searchFunction,
   searchParams = {},
   multiSelect = false,
-  selectedItems = [],
+  initialSelectedItems = [], // Use initialSelectedItems instead of selectedItems
   onItemRemove,
   renderSelectedItems,
   disabled = false,
@@ -88,16 +82,23 @@ export function SearchableSelect<T extends SearchResult>({
     typeof value === "string" && displayValue ? displayValue : null,
   );
 
-  // Initialize internal state once
-  const [internalSelectedItems, setInternalSelectedItems] = useState<T[]>([]);
+  // Store selected items internally
+  const [internalSelectedItems, setInternalSelectedItems] =
+    useState<T[]>(initialSelectedItems);
 
   const { query, setQuery, results, setResults, isLoading } =
     useDebouncedSearch((q: string) => searchFunction(q, searchParams));
 
-  // Sync internal state with prop only when selectedItems changes
+  // Initialize from value on mount and when initialSelectedItems changes
   useEffect(() => {
-    setInternalSelectedItems(selectedItems);
-  }, [JSON.stringify(selectedItems.map((item) => item.id))]);
+    if (multiSelect && Array.isArray(value)) {
+      // Map initialSelectedItems to the current value array
+      const initialItems = initialSelectedItems.filter(
+        (item) => Array.isArray(value) && value.includes(item.id),
+      );
+      setInternalSelectedItems(initialItems);
+    }
+  }, []);
 
   useEffect(() => {
     if (popoverOpen) {
@@ -128,12 +129,34 @@ export function SearchableSelect<T extends SearchResult>({
 
   useEffect(() => {
     if (!multiSelect && !Array.isArray(value) && value) {
-      const matchingItem = selectedItems.find((item) => item.id === value);
+      const matchingItem = internalSelectedItems.find(
+        (item) => item.id === value,
+      );
       if (
         matchingItem &&
         (!selectedItem || selectedItem.id !== matchingItem.id)
       ) {
         setSelectedItem(matchingItem);
+      } else if (
+        displayValue &&
+        (!selectedItem || selectedItem.id !== displayValue.id)
+      ) {
+        setSelectedItem(displayValue);
+      }
+    }
+  }, [value, multiSelect, displayValue]);
+
+  // Sync value changes with internal state for multi-select
+  useEffect(() => {
+    if (multiSelect && Array.isArray(value)) {
+      // Keep selected items in sync with value
+      const validItems = internalSelectedItems.filter((item) =>
+        value.includes(item.id),
+      );
+
+      // Check if we need to update (avoid infinite loop)
+      if (validItems.length !== internalSelectedItems.length) {
+        setInternalSelectedItems(validItems);
       }
     }
   }, [value, multiSelect]);
@@ -144,10 +167,10 @@ export function SearchableSelect<T extends SearchResult>({
       const valueArray = Array.isArray(value) ? value : [];
       if (!valueArray.includes(item.id)) {
         const newValue = [...valueArray, item.id];
-        onChange(newValue);
 
-        // We don't need to update internalSelectedItems here
-        // as the parent will update selectedItems prop and our useEffect will handle it
+        // Update both the parent value and our internal state
+        onChange(newValue);
+        setInternalSelectedItems([...internalSelectedItems, item]);
       }
     } else {
       // For single select mode, just set the value
@@ -163,7 +186,10 @@ export function SearchableSelect<T extends SearchResult>({
       const newValue = value.filter((id) => id !== itemId);
       onChange(newValue);
 
-      // Let the parent update the selectedItems prop, which will trigger our useEffect
+      // Update internal state
+      setInternalSelectedItems(
+        internalSelectedItems.filter((item) => item.id !== itemId),
+      );
     }
     if (onItemRemove) {
       onItemRemove(itemId);
@@ -182,6 +208,33 @@ export function SearchableSelect<T extends SearchResult>({
     // Single select mode - find the corresponding selectedItem
     return selectedItem ? selectedItem.display : placeholder;
   };
+
+  // Function to handle fetching and adding an item when we only have its ID
+  const addItemById = async (id: string) => {
+    try {
+      // Use searchFunction to find the item
+      const items = await searchFunction("", { ...searchParams, id });
+      const item = items.find((i) => i.id === id);
+
+      if (item && !internalSelectedItems.some((si) => si.id === id)) {
+        setInternalSelectedItems([...internalSelectedItems, item]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch item details:", error);
+    }
+  };
+
+  // When value changes and we don't have the corresponding items, fetch them
+  useEffect(() => {
+    if (multiSelect && Array.isArray(value) && value.length > 0) {
+      const missingIds = value.filter(
+        (id) => !internalSelectedItems.some((item) => item.id === id),
+      );
+
+      // Fetch missing items
+      missingIds.forEach((id) => addItemById(id));
+    }
+  }, [value]);
 
   return (
     <div className={cn("space-y-2", className)}>

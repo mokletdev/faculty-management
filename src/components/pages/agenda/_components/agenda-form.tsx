@@ -94,9 +94,12 @@ export const AgendaForm = ({ agenda }: AgendaFormProps) => {
     }));
   };
 
-  const searchDosens = async (query: string): Promise<SearchResult[]> => {
+  const searchDosens = async (
+    query: string,
+    extraParams?: { id?: string },
+  ): Promise<SearchResult[]> => {
     const response = await fetch(
-      `/api/dosen/search?q=${encodeURIComponent(query)}`,
+      `/api/dosen/search?q=${encodeURIComponent(query)}${extraParams?.id ? `&id=${extraParams.id}` : ""}`,
     );
     if (!response.ok) throw new Error("Gagal mencari dosen");
     const results = (await response.json()) as DosenSearchResult[];
@@ -359,17 +362,22 @@ export const AgendaForm = ({ agenda }: AgendaFormProps) => {
                           onChange={field.onChange}
                           searchFunction={searchDosens}
                           multiSelect={true}
-                          selectedItems={
-                            field.value?.map((userId) => {
-                              const dosens = agenda!.accessDosen.map(
-                                (dosen) => dosen.user,
-                              );
-                              const dosen = dosens.find((d) => d.id === userId);
-                              return {
-                                id: userId,
-                                display: dosen?.name || dosen?.email || userId,
-                              };
-                            }) || []
+                          initialSelectedItems={
+                            agenda?.accessDosen
+                              ? field.value?.map((userId) => {
+                                  const dosens = agenda.accessDosen.map(
+                                    (dosen) => dosen.user,
+                                  );
+                                  const dosen = dosens.find(
+                                    (d) => d.id === userId,
+                                  )!;
+
+                                  return {
+                                    id: userId,
+                                    display: `${dosen.name ?? "Unknown"} (${dosen.email ?? "unknown"})`,
+                                  };
+                                }) || []
+                              : []
                           }
                         />
                       </FormControl>

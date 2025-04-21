@@ -1,10 +1,8 @@
 import {
+  Calendar,
   CalendarDays,
   LayoutGrid,
-  Settings,
-  SquarePen,
-  Tag,
-  Users,
+  User,
   type LucideIcon,
 } from "lucide-react";
 
@@ -41,42 +39,51 @@ export function getMenuList(pathname: string): Group[] {
       ],
     },
     {
-      groupLabel: "Schedule",
+      groupLabel: "Penjadwalan",
       menus: [
         {
           href: "",
-          label: "Agendas",
-          icon: SquarePen,
+          label: "Agenda",
+          icon: Calendar,
           submenus: [
             {
               href: "/admin/agenda",
-              label: "Agendas Overview",
+              label: "Ringkasan Agenda",
             },
             {
               href: "/admin/agenda/new",
-              label: "New Agenda",
+              label: "Agenda Baru",
             },
           ],
         },
         {
           href: "/admin/calendar",
-          label: "Calendar",
+          label: "Kalender",
           icon: CalendarDays,
         },
       ],
     },
     {
-      groupLabel: "Settings",
+      groupLabel: "Kelola Pengguna",
       menus: [
         {
-          href: "/users",
-          label: "Users",
-          icon: Users,
-        },
-        {
-          href: "/account",
-          label: "Account",
-          icon: Settings,
+          href: "",
+          label: "Pengguna",
+          icon: User,
+          submenus: [
+            {
+              href: "/admin/user",
+              label: "Ringkasan Pengguna",
+            },
+            {
+              href: "/admin/user/new",
+              label: "Pengguna Baru",
+            },
+            {
+              href: "/admin/user/bulk-create",
+              label: "Tambah Massal",
+            },
+          ],
         },
       ],
     },

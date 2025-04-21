@@ -35,21 +35,21 @@ function Calendar({
           "text-neutral-400 rounded-md w-8 font-normal text-[0.75rem] tracking-wide",
         row: "flex w-full mt-2",
         cell: cn(
-          "relative p-0.5 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-primary-800 [&:has([aria-selected])]:text-white [&:has([aria-selected].day-range-end)]:rounded-r-md",
+          "relative p-0.5 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-primary-800 [&:has([aria-selected])]:text-black [&:has([aria-selected].day-range-end)]:rounded-r-md",
           props.mode === "range"
             ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
             : "[&:has([aria-selected])]:rounded-full",
         ),
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "size-8 p-0 font-normal text-neutral-700 hover:bg-neutral-100",
+          "size-8 p-0 font-normal text-neutral-700 rounded-full hover:bg-neutral-100",
         ),
         day_range_start:
           "day-range-start bg-primary-900 text-white hover:bg-primary-800",
         day_range_end:
           "day-range-end bg-primary-900 text-white hover:bg-primary-800",
         day_selected:
-          "bg-primary-800 text-white hover:bg-primary-900 rounded-full",
+          "!bg-primary-800 text-white hover:bg-primary-900 hover:text-white rounded-full",
         day_today:
           "ring-1 ring-primary-900 text-primary-900 font-semibold text-black",
         day_outside: "text-neutral-300 opacity-70",

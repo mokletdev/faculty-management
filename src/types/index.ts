@@ -39,3 +39,22 @@ export type RoomSearchResult = {
   id: string;
   name: string;
 };
+
+export type ActionResponse<T> = {
+  data?: T;
+  error?: {
+    message: string;
+    code: string;
+    fieldErrors?: Record<string, string[]>;
+  };
+};
+
+export type BulkCreateResult = {
+  totalProcessed: number;
+  successCount: number;
+  failedUsers: {
+    index: number;
+    email: string;
+    error: string;
+  }[];
+};

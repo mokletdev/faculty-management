@@ -40,6 +40,7 @@ export const columns: ColumnDef<Agenda>[] = [
   {
     id: "index",
     enableSorting: true,
+    accessorFn: (_, index) => index + 1,
     header: ({ column }) => {
       return (
         <Button

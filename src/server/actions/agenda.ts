@@ -2,23 +2,20 @@
 
 import { ActionError, handleActionError } from "@/lib/exceptions";
 import { agendaSchema, type AgendaSchema } from "@/lib/validations/agenda";
+import type { ActionResponse } from "@/types";
 import type { Agenda } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
 import { db } from "../db";
-
-export type AgendaResponse<T> = {
-  data?: T;
-  error?: {
-    message: string;
-    code: string;
-    fieldErrors?: Record<string, string[]>;
-  };
-};
+import {
+  createGoogleCalendarEvent,
+  deleteGoogleCalendarEvent,
+  updateGoogleCalendarEvent,
+} from "./google-calendar";
 
 export const createAgenda = async (
   formData: AgendaSchema,
-): Promise<AgendaResponse<Agenda>> => {
+): Promise<ActionResponse<Agenda>> => {
   try {
     const validatedFields = agendaSchema.parse(formData);
 
@@ -57,6 +54,14 @@ export const createAgenda = async (
         accessMahasiswa: validatedFields.accessMahasiswa,
         accessAllDosen: validatedFields.accessAllDosen,
       },
+      include: {
+        room: {
+          select: {
+            name: true,
+            location: true,
+          },
+        },
+      },
     });
 
     if (
@@ -72,6 +77,7 @@ export const createAgenda = async (
       });
     }
 
+    await createGoogleCalendarEvent(agenda);
     await createNotifications(agenda.id, "CREATED");
 
     revalidatePath("/", "layout");
@@ -84,7 +90,7 @@ export const createAgenda = async (
 export const updateAgenda = async (
   id: string,
   formData: AgendaSchema,
-): Promise<AgendaResponse<Agenda>> => {
+): Promise<ActionResponse<Agenda>> => {
   try {
     const validatedFields = agendaSchema.parse(formData);
 
@@ -128,6 +134,11 @@ export const updateAgenda = async (
         accessMahasiswa: validatedFields.accessMahasiswa,
         accessAllDosen: validatedFields.accessAllDosen,
       },
+      include: {
+        room: {
+          select: { name: true, location: true },
+        },
+      },
     });
 
     if (
@@ -170,6 +181,7 @@ export const updateAgenda = async (
       });
     }
 
+    await updateGoogleCalendarEvent(agenda);
     await createNotifications(agenda.id, "UPDATED");
 
     revalidatePath("/", "layout");
@@ -181,17 +193,22 @@ export const updateAgenda = async (
 
 export async function deleteAgenda(
   id: string,
-): Promise<AgendaResponse<Agenda>> {
+): Promise<ActionResponse<Agenda>> {
   try {
     const session = await auth();
     if (!session) {
       throw new ActionError("Unauthorized access", "UNAUTHORIZED");
     }
 
-    const existingAgenda = await db.agenda.findUnique({ where: { id } });
+    const existingAgenda = await db.agenda.findUnique({
+      where: { id },
+      include: { room: { select: { name: true, location: true } } },
+    });
     if (!existingAgenda) {
       throw new ActionError("Agenda not found", "NOT_FOUND");
     }
+
+    await deleteGoogleCalendarEvent(existingAgenda);
 
     await db.agendaAccess.deleteMany({
       where: { agendaId: id },
