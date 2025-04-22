@@ -56,6 +56,14 @@ export const createAgenda = async (
         createdById: session.user.id,
         accessMahasiswa: validatedFields.accessMahasiswa,
         accessAllDosen: validatedFields.accessAllDosen,
+        accessDosen: validatedFields.accessAllDosen
+          ? undefined
+          : {
+              create:
+                validatedFields.accessDosen?.map((userId) => ({
+                  userId,
+                })) ?? [],
+            },
       },
       include: {
         room: {
@@ -64,21 +72,13 @@ export const createAgenda = async (
             location: true,
           },
         },
+        accessDosen: {
+          select: {
+            user: true,
+          },
+        },
       },
     });
-
-    if (
-      !validatedFields.accessAllDosen &&
-      validatedFields.accessDosen &&
-      validatedFields.accessDosen.length > 0
-    ) {
-      await db.agendaAccess.createMany({
-        data: validatedFields.accessDosen.map((userId) => ({
-          agendaId: agenda.id,
-          userId,
-        })),
-      });
-    }
 
     await createGoogleCalendarEvent(agenda);
     await createNotifications(agenda.id, "CREATED");
@@ -140,6 +140,11 @@ export const updateAgenda = async (
       include: {
         room: {
           select: { name: true, location: true },
+        },
+        accessDosen: {
+          select: {
+            user: true,
+          },
         },
       },
     });
@@ -205,7 +210,14 @@ export async function deleteAgenda(
 
     const existingAgenda = await db.agenda.findUnique({
       where: { id },
-      include: { room: { select: { name: true, location: true } } },
+      include: {
+        room: { select: { name: true, location: true } },
+        accessDosen: {
+          select: {
+            user: true,
+          },
+        },
+      },
     });
     if (!existingAgenda) {
       throw new ActionError("Agenda not found", "NOT_FOUND");

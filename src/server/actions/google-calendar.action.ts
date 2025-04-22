@@ -1,12 +1,25 @@
 import { googleCalendarClient } from "@/lib/google-calendar";
 import { getGoogleCalendarId } from "@/server/retrievers/calendar";
-import type { Prisma, SyncStatus } from "@prisma/client";
+import type { Priority, Prisma, SyncStatus } from "@prisma/client";
 import type { calendar_v3 } from "googleapis";
 import { db } from "../db";
 
 type Agenda = Prisma.AgendaGetPayload<{
-  include: { room: { select: { name: true; location: true } } };
+  include: {
+    room: { select: { name: true; location: true } };
+    accessDosen: {
+      select: {
+        user: true;
+      };
+    };
+  };
 }>;
+
+const agendaColorMap: Record<Priority, string> = {
+  HIGH: "11",
+  LOW: "10",
+  MEDIUM: "5 ",
+};
 
 export class GoogleCalendarError extends Error {
   constructor(
@@ -46,6 +59,12 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
+    const attendees: calendar_v3.Schema$EventAttendee[] =
+      agenda.accessDosen.map((dosen) => ({
+        displayName: dosen.user.name,
+        email: dosen.user.email,
+      }));
+
     const event: calendar_v3.Schema$Event = {
       summary: agenda.title,
       description: agenda.description ?? "",
@@ -63,7 +82,8 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
           agendaId: agenda.id,
         },
       },
-      colorId: "",
+      colorId: agendaColorMap[agenda.priority],
+      attendees: attendees,
     };
 
     const googleCalendarId = await getGoogleCalendarId();
@@ -132,6 +152,11 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
         lastSyncAttempt: new Date(),
       },
     });
+    const attendees: calendar_v3.Schema$EventAttendee[] =
+      agenda.accessDosen.map((dosen) => ({
+        displayName: dosen.user.name,
+        email: dosen.user.email,
+      }));
 
     if (!agenda.googleEventId) {
       await logSync(
@@ -155,11 +180,13 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
         dateTime: agenda.endTime.toISOString(),
         timeZone: "Asia/Jakarta",
       },
+      colorId: agenda.priority ? agendaColorMap[agenda.priority] : undefined,
       extendedProperties: {
         private: {
           agendaId: agenda.id,
         },
       },
+      attendees,
     };
 
     const googleCalendarId = await getGoogleCalendarId();
@@ -382,6 +409,11 @@ export const retrySyncFailures = async (limit = 10): Promise<number> => {
         select: {
           name: true,
           location: true,
+        },
+      },
+      accessDosen: {
+        select: {
+          user: true,
         },
       },
     },
