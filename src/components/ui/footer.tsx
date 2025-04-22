@@ -1,10 +1,11 @@
 import Image from "next/image";
-import { H6, Typography } from "./typography";
-import ButtonLink from "./button-link";
-import WhatsappIcon from "../icons/whatsapp";
+import Link from "next/link";
+import { ArrowRight } from "../icons/arrows";
 import FacebookIcon from "../icons/facebook";
 import SMSIcon from "../icons/sms";
-import { ArrowRight } from "../icons/arrows";
+import WhatsappIcon from "../icons/whatsapp";
+import { Button } from "./button";
+import { H6, Typography } from "./typography";
 
 const footerItems = [
   { name: "Beranda", href: "/" },
@@ -37,31 +38,32 @@ export default function Footer() {
           </Typography>
           <div className="flex flex-col gap-8 xl:flex-row">
             {footerItems.map((i) => (
-              <ButtonLink href={i.href} key={i.name} className="w-fit">
-                {i.name}
-              </ButtonLink>
+              <Button key={i.name} asChild>
+                <Link href={i.href} className="w-fit">
+                  {i.name}
+                </Link>
+              </Button>
             ))}
           </div>
         </div>
         <div className="flex h-full w-full flex-col items-start gap-8 xl:w-1/5">
           <div className="flex gap-3">
             {socialMedia.map((i) => (
-              <ButtonLink
-                target="_blank"
-                href={i.href}
-                key={i.name}
-                className="h-6 w-6"
-              >
-                {i.icon}
-              </ButtonLink>
+              <Button key={i.name} asChild>
+                <Link target="_blank" href={i.href} className="h-6 w-6">
+                  {i.icon}
+                </Link>
+              </Button>
             ))}
           </div>
-          <ButtonLink href="mailto:loremipsum@gmail.com">
-            <span className="inline-flex items-center gap-2">
-              loremipsum@gmail.com
-              <ArrowRight />
-            </span>
-          </ButtonLink>
+          <Button asChild>
+            <Link href="mailto:loremipsum@gmail.com">
+              <span className="inline-flex items-center gap-2">
+                loremipsum@gmail.com
+                <ArrowRight />
+              </span>
+            </Link>
+          </Button>
         </div>
       </div>
     </footer>
