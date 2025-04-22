@@ -8,6 +8,10 @@
     var(--font-open-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
+  --breakpoint-xl: 1476px;
+  --breakpoint-md: 920px;
+  --breakpoint-sm: 460px;
+
   /* Base Colors */
   --color-black: #0e0e0e;
   --color-white: #ffffff;
