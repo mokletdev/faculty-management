@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import moment from "moment";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FC } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import { AgendaDetailsDialog } from "./agenda-details-dialog";
 
@@ -31,13 +31,16 @@ import {
   type SearchResult,
 } from "@/components/ui/searchable-select";
 import { H2 } from "@/components/ui/typography";
+import "@/styles/calendar.css";
 import type { AgendaWithRoom, FilterOptions, RoomSearchResult } from "@/types";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "@/styles/calendar.css";
+import { GoogleCalendarLink } from "./google-calendar-url";
 
 const localizer = momentLocalizer(moment);
 
-export const CalendarView = () => {
+export const CalendarView: FC<{ calendarLink?: string }> = ({
+  calendarLink,
+}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -408,6 +411,7 @@ export const CalendarView = () => {
           >
             Low Priority
           </Badge>
+          {calendarLink && <GoogleCalendarLink calendarLink={calendarLink} />}
         </div>
       </div>
     );

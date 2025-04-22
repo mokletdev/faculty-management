@@ -5,8 +5,15 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { CalendarView } from "./_components/calendar-view";
 import { CalendarSkeleton } from "./_components/calendar-view-skeleton";
+import {
+  getGoogleCalendarId,
+  getShareableCalendarUrl,
+} from "@/server/retrievers/calendar";
 
 export const AdminCalendar = async () => {
+  const calendarId = await getGoogleCalendarId();
+  const calendarLink = getShareableCalendarUrl(calendarId);
+
   return (
     <div className="container mx-auto py-6">
       <div className="mb-8 flex flex-col justify-between gap-y-2 md:flex-row md:items-center">
@@ -18,7 +25,7 @@ export const AdminCalendar = async () => {
         </Button>
       </div>
       <Suspense fallback={<CalendarSkeleton />}>
-        <CalendarView />
+        <CalendarView calendarLink={calendarLink} />
       </Suspense>
     </div>
   );

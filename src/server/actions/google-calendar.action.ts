@@ -1,7 +1,8 @@
-import { googleCalendarClient, googleCalendarId } from "@/lib/google-calendar";
+import { googleCalendarClient } from "@/lib/google-calendar";
+import { getGoogleCalendarId } from "@/server/retrievers/calendar";
 import type { Prisma, SyncStatus } from "@prisma/client";
-import { db } from "../db";
 import type { calendar_v3 } from "googleapis";
+import { db } from "../db";
 
 type Agenda = Prisma.AgendaGetPayload<{
   include: { room: { select: { name: true; location: true } } };
@@ -48,7 +49,7 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
     const event: calendar_v3.Schema$Event = {
       summary: agenda.title,
       description: agenda.description ?? "",
-      location: `Room: ${agenda.room.name}${agenda.room.location ? `, ${agenda.room.location}` : ""}`,
+      location: `Room: ${agenda.room.name}${agenda.room.location ? `(${agenda.room.location})` : ""}`,
       start: {
         dateTime: agenda.startTime.toISOString(),
         timeZone: "Asia/Jakarta",
@@ -64,6 +65,8 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
       colorId: "",
     };
+
+    const googleCalendarId = await getGoogleCalendarId();
 
     const response = await googleCalendarClient.events.insert({
       calendarId: googleCalendarId,
@@ -143,7 +146,7 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
     const event: calendar_v3.Schema$Event = {
       summary: agenda.title,
       description: agenda.description ?? "",
-      location: `Room: ${agenda.room.name}${agenda.room.location ? `, ${agenda.room.location}` : ""}`,
+      location: `Room: ${agenda.room.name}${agenda.room.location ? `(${agenda.room.location})` : ""}`,
       start: {
         dateTime: agenda.startTime.toISOString(),
         timeZone: "Asia/Jakarta",
@@ -158,6 +161,8 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
         },
       },
     };
+
+    const googleCalendarId = await getGoogleCalendarId();
 
     await googleCalendarClient.events.update({
       calendarId: googleCalendarId,
@@ -262,6 +267,8 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
         lastSyncAttempt: new Date(),
       },
     });
+
+    const googleCalendarId = await getGoogleCalendarId();
 
     await googleCalendarClient.events.delete({
       calendarId: googleCalendarId,

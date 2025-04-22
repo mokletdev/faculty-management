@@ -163,3 +163,18 @@ export const countUserAgendas = async (
 
   return count;
 };
+
+export const getGoogleCalendarId = async () => {
+  const googleCalendarShareable = await db.googleCalendarShareable.findFirst();
+
+  if (!googleCalendarShareable)
+    throw new Error(
+      "Google Calendar Shareable is not initialized! Seed it first.",
+    );
+
+  return googleCalendarShareable.calendarId;
+};
+
+export const getShareableCalendarUrl = (calendarId: string) => {
+  return `https://calendar.google.com/calendar/u/0/r?cid=${calendarId}`;
+};
