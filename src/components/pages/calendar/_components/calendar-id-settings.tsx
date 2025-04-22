@@ -40,7 +40,7 @@ const calendarIdSchema = z.object({
 type CalendarIdFormValues = z.infer<typeof calendarIdSchema>;
 
 interface CalendarSettingsFormProps {
-  existingCalendarId?: string;
+  existingCalendarId: string;
 }
 
 export const CalendarSettingsForm = ({
@@ -51,7 +51,7 @@ export const CalendarSettingsForm = ({
   const form = useForm<CalendarIdFormValues>({
     resolver: zodResolver(calendarIdSchema),
     defaultValues: {
-      calendarId: existingCalendarId || "",
+      calendarId: existingCalendarId,
     },
   });
 
@@ -85,7 +85,9 @@ export const CalendarSettingsForm = ({
       return;
     }
 
-    navigator.clipboard.writeText(calendarId);
+    navigator.clipboard
+      .writeText(calendarId)
+      .catch((err) => console.error(err));
     toast.success("ID Calendar disalin ke clipboard");
   };
 
@@ -104,7 +106,7 @@ export const CalendarSettingsForm = ({
 
   const resetForm = () => {
     form.reset({
-      calendarId: existingCalendarId || "",
+      calendarId: existingCalendarId,
     });
     toast.info("Form direset ke nilai awal");
   };

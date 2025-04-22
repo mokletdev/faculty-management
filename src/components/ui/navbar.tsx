@@ -1,13 +1,13 @@
 "use client";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { Button } from "./button";
-import ButtonLink from "./button-link";
-import HamburgerIcon from "../icons/hamburger";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
-import CrossIcon from "../icons/cross";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import CrossIcon from "../icons/cross";
+import HamburgerIcon from "../icons/hamburger";
+import { Button } from "./button";
 
 const navbarItems = [
   { name: "Beranda", href: "/" },
@@ -39,13 +39,9 @@ export default function Navbar() {
           <div className="hidden items-center justify-between gap-[61px] xl:flex">
             <div className="flex gap-8">
               {navbarItems.map((item) => (
-                <ButtonLink
-                  key={item.name}
-                  href={item.href}
-                  isActive={isActive(item.href)}
-                >
-                  {item.name}
-                </ButtonLink>
+                <Button key={item.name} asChild>
+                  <Link href={item.href}>{item.name}</Link>
+                </Button>
               ))}
             </div>
             <Button onClick={() => signIn()}>Login</Button>
@@ -69,13 +65,9 @@ export default function Navbar() {
         >
           <div className="flex flex-col items-center gap-8">
             {navbarItems.map((item) => (
-              <ButtonLink
-                key={item.name}
-                href={item.href}
-                isActive={isActive(item.href)}
-              >
-                {item.name}
-              </ButtonLink>
+              <Button key={item.name} asChild>
+                <Link href={item.href}>{item.name}</Link>
+              </Button>
             ))}
           </div>
           <Button className="w-full" onClick={() => signIn()}>

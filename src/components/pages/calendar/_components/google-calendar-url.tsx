@@ -80,7 +80,9 @@ export const GoogleCalendarLink: FC<{ calendarLink: string }> = ({
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(calendarLink);
+    navigator.clipboard
+      .writeText(calendarLink)
+      .catch((err) => console.error(err));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
