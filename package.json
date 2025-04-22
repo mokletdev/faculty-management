@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "prebuild": "pnpm db:seed:all",
     "check": "next lint && tsc --noEmit",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
@@ -20,7 +21,9 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "db:seed:user": "tsx prisma/seed/user.ts",
-    "db:seed:room": "tsx prisma/seed/room.ts"
+    "db:seed:room": "tsx prisma/seed/room.ts",
+    "db:seed:calendar-shareable": "tsx prisma/seed/google-calendar-shareable.ts",
+    "db:seed:all": "pnpm db:seed:user && pnpm db:seed:room && pnpm db:seed:calendar-shareable"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",
@@ -48,6 +51,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
     "googleapis": "^148.0.0",
     "immer": "^10.1.1",
     "lucide-react": "^0.488.0",
