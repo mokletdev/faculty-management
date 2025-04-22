@@ -100,16 +100,16 @@ export function AgendaDetailsDialog({
               <div className="flex items-center gap-2">
                 <Avatar className="h-6 w-6">
                   <AvatarImage
-                    src={agenda.createdBy?.image || ""}
-                    alt={agenda.createdBy?.name || "Unknown"}
+                    src={agenda.createdBy?.image ?? ""}
+                    alt={agenda.createdBy?.name ?? "Unknown"}
                   />
                   <AvatarFallback>
-                    {agenda.createdBy?.name?.[0] || "U"}
+                    {agenda.createdBy?.name?.[0] ?? "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="font-medium">
-                    {agenda.createdBy?.name || "Unknown"}
+                    {agenda.createdBy?.name ?? "Unknown"}
                   </p>
                   <p className="text-muted-foreground text-xs">
                     {agenda.createdBy?.email}
@@ -133,11 +133,11 @@ export function AgendaDetailsDialog({
                   >
                     <Avatar className="h-6 w-6">
                       <AvatarImage
-                        src={access.user?.image || ""}
-                        alt={access.user?.name || "Unknown"}
+                        src={access.user?.image ?? ""}
+                        alt={access.user?.name ?? "Unknown"}
                       />
                       <AvatarFallback>
-                        {access.user?.name?.[0] || "U"}
+                        {access.user?.name?.[0] ?? "U"}
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-sm">{access.user?.name}</span>

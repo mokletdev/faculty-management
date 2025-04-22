@@ -67,7 +67,7 @@ export const UserTable: FC<{
     reset: resetSearch,
   } = useDebouncedSearch(async (query) => {
     router.push(
-      `${pathname}?${createQueryString({ search: query || null, page: 1 })}`,
+      `${pathname}?${createQueryString({ search: query ?? null, page: 1 })}`,
     );
     return [];
   }, 1000);
@@ -139,8 +139,8 @@ export const UserTable: FC<{
         />
         <div className="flex items-center gap-2">
           <Select
-            value={role || ""}
-            onValueChange={(value) => handleRoleChange(value || null)}
+            value={role ?? ""}
+            onValueChange={(value) => handleRoleChange(value ?? null)}
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Filter Role" />

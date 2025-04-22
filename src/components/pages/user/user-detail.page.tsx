@@ -18,8 +18,13 @@ import { AgendaList } from "./_components/user-detail/agenda-list";
 import { NotificationList } from "./_components/user-detail/notification-list";
 import { UserStats } from "./_components/user-detail/user-stats";
 
-export const UserDetail = async ({ params }: { params: { id: string } }) => {
-  const user = await getUserById(params.id);
+export const UserDetail = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const { id } = await params;
+  const user = await getUserById(id);
 
   if (!user) {
     return notFound();
@@ -60,8 +65,8 @@ export const UserDetail = async ({ params }: { params: { id: string } }) => {
               <div className="flex flex-col items-center space-y-4 text-center">
                 <Avatar className="h-24 w-24">
                   <AvatarImage
-                    src={user.image || ""}
-                    alt={user.name || "User"}
+                    src={user.image ?? ""}
+                    alt={user.name ?? "User"}
                   />
                   <AvatarFallback className="text-xl">
                     {user.name ? user.name.charAt(0).toUpperCase() : "U"}
@@ -70,7 +75,7 @@ export const UserDetail = async ({ params }: { params: { id: string } }) => {
 
                 <div>
                   <h3 className="text-xl font-semibold">
-                    {user.name || "Unnamed User"}
+                    {user.name ?? "Unnamed User"}
                   </h3>
                   <div className="text-muted-foreground flex items-center justify-center gap-2">
                     <Mail className="h-4 w-4" />

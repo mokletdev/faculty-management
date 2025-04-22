@@ -24,10 +24,10 @@ import {
   updateUserSchema,
   type CreateUserSchema,
   type UpdateUserSchema,
-} from "@/lib/validations/user";
-import { createUser, updateUser } from "@/server/actions/user";
+} from "@/lib/validations/user.validator";
+import { createUser, updateUser } from "@/server/actions/user.action";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Prisma, UserRole } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -58,11 +58,11 @@ export const UserForm = ({ user }: UserFormProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: user?.name || "",
-      email: user?.email || "",
+      name: user?.name ?? "",
+      email: user?.email ?? "",
       password: "",
-      role: (user?.role as UserRole) || "DOSEN",
-      image: user?.image || "",
+      role: user?.role ?? "DOSEN",
+      image: user?.image ?? "",
     } as FormValues,
   });
 
@@ -71,7 +71,7 @@ export const UserForm = ({ user }: UserFormProps) => {
       setIsSubmitting(true);
 
       if (user) {
-        const response = await updateUser(user.id, values as UpdateUserSchema);
+        const response = await updateUser(user.id, values);
 
         if (response.error) {
           const { message, fieldErrors } = response.error;
@@ -212,7 +212,7 @@ export const UserForm = ({ user }: UserFormProps) => {
                     <Input
                       placeholder="Masukkan URL gambar profil (opsional)"
                       {...field}
-                      value={field.value || ""}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormDescription>

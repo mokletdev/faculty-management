@@ -224,15 +224,17 @@ export function SearchableSelect<T extends SearchResult>({
     }
   };
 
-  // When value changes and we don't have the corresponding items, fetch them
   useEffect(() => {
     if (multiSelect && Array.isArray(value) && value.length > 0) {
       const missingIds = value.filter(
         (id) => !internalSelectedItems.some((item) => item.id === id),
       );
 
-      // Fetch missing items
-      missingIds.forEach((id) => addItemById(id));
+      (async () => {
+        for (const id of missingIds) {
+          await addItemById(id);
+        }
+      })().catch((err) => console.error(err));
     }
   }, [value]);
 

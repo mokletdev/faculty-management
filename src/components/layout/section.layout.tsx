@@ -7,7 +7,7 @@ export const SectionContainer = ({
   ...props
 }: HTMLAttributes<HTMLDivElement>) => {
   return (
-    <section {...props} className={cn("w-full px-5 py-8", className)}>
+    <section {...props} className={cn("w-full p-[124px]", className)}>
       <div className="mx-auto w-full max-w-7xl">{children}</div>
     </section>
   );
