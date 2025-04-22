@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { HTMLAttributeAnchorTarget, ReactNode } from "react";
 
 const linkButtonVariants = cva(
   "inline-flex cursor-pointer rounded-full items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-red-500/20 dark:aria-invalid:ring-red-500/40 aria-invalid:border-red-500",
@@ -40,15 +40,18 @@ export default function ButtonLink({
   href,
   children,
   isActive,
+  target,
   ...props
 }: React.ComponentProps<"link"> &
   VariantProps<typeof linkButtonVariants> & {
     children?: ReactNode;
-    isActive: Boolean;
+    isActive?: Boolean;
+    target?: HTMLAttributeAnchorTarget;
   }) {
   return (
     <Link
       href={href ?? "#"}
+      target={target}
       className={cn(
         linkButtonVariants({ variant, size, className }),
         isActive && "text-primary-800 font-bold",

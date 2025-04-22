@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export default function MainLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <PageContainer>{children}</PageContainer>
+      <PageContainer isMainLayout>{children}</PageContainer>
     </>
   );
 }
