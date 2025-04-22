@@ -1,12 +1,12 @@
 import { googleCalendarClient, googleCalendarId } from "@/lib/google-calendar";
 import type { Prisma, SyncStatus } from "@prisma/client";
 import { db } from "../db";
+import type { calendar_v3 } from "googleapis";
 
 type Agenda = Prisma.AgendaGetPayload<{
   include: { room: { select: { name: true; location: true } } };
 }>;
 
-// Custom error class for Google Calendar operations
 export class GoogleCalendarError extends Error {
   constructor(
     message: string,
@@ -19,7 +19,6 @@ export class GoogleCalendarError extends Error {
   }
 }
 
-// Helper function to log sync operations
 const logSync = async (
   agendaId: string,
   operation: string,
@@ -38,7 +37,6 @@ const logSync = async (
 
 export const createGoogleCalendarEvent = async (agenda: Agenda) => {
   try {
-    // Update agenda to show sync is in progress
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -47,8 +45,7 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Create the event object
-    const event = {
+    const event: calendar_v3.Schema$Event = {
       summary: agenda.title,
       description: agenda.description ?? "",
       location: `Room: ${agenda.room.name}${agenda.room.location ? `, ${agenda.room.location}` : ""}`,
@@ -65,15 +62,14 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
           agendaId: agenda.id,
         },
       },
+      colorId: "",
     };
 
-    // Make the API call to create the event
     const response = await googleCalendarClient.events.insert({
       calendarId: googleCalendarId,
       requestBody: event,
     });
 
-    // Update the agenda with the Google event ID and sync status
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -83,7 +79,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the successful operation
     await logSync(agenda.id, "create", "SUCCESS");
 
     return response.data.id;
@@ -98,7 +93,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     );
 
-    // Determine the appropriate sync status based on the error
     let syncStatus: SyncStatus = "FAILED";
     if (error.response?.status === 401 || error.response?.status === 403) {
       syncStatus = "AUTH_ERROR";
@@ -106,7 +100,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       syncStatus = "RATE_LIMITED";
     }
 
-    // Update the agenda with the error information
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -116,7 +109,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the failed operation
     await logSync(agenda.id, "create", "FAILED", errorMessage as string);
 
     throw new GoogleCalendarError(
@@ -130,7 +122,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
 
 export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
   try {
-    // Update agenda to show sync is in progress
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -139,7 +130,6 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // If no Google event ID, create a new event instead
     if (!agenda.googleEventId) {
       await logSync(
         agenda.id,
@@ -150,8 +140,7 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       return await createGoogleCalendarEvent(agenda);
     }
 
-    // Create the event object for update
-    const event = {
+    const event: calendar_v3.Schema$Event = {
       summary: agenda.title,
       description: agenda.description ?? "",
       location: `Room: ${agenda.room.name}${agenda.room.location ? `, ${agenda.room.location}` : ""}`,
@@ -170,14 +159,12 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     };
 
-    // Make the API call to update the event
     await googleCalendarClient.events.update({
       calendarId: googleCalendarId,
       eventId: agenda.googleEventId,
       requestBody: event,
     });
 
-    // Update the agenda with successful sync status
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -186,7 +173,6 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the successful operation
     await logSync(agenda.id, "update", "SUCCESS");
 
     return agenda.googleEventId;
@@ -212,13 +198,11 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       );
 
       try {
-        // Clear the Google event ID since it no longer exists
         await db.agenda.update({
           where: { id: agenda.id },
           data: { googleEventId: null },
         });
 
-        // Create a new event
         return await createGoogleCalendarEvent(agenda);
       } catch (createError) {
         await logSync(
@@ -237,7 +221,6 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       }
     }
 
-    // Determine the appropriate sync status based on the error
     let syncStatus: SyncStatus = "FAILED";
     if (error.response?.status === 401 || error.response?.status === 403) {
       syncStatus = "AUTH_ERROR";
@@ -245,7 +228,6 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       syncStatus = "RATE_LIMITED";
     }
 
-    // Update the agenda with the error information
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -255,7 +237,6 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the failed operation
     await logSync(agenda.id, "update", "FAILED", errorMessage as string);
 
     throw new GoogleCalendarError(
@@ -269,13 +250,11 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
 
 export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
   try {
-    // If no Google event ID, nothing to delete
     if (!agenda.googleEventId) {
       await logSync(agenda.id, "delete", "SKIPPED", "No Google event ID found");
       return;
     }
 
-    // Update agenda to show sync is in progress
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -284,13 +263,11 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Make the API call to delete the event
     await googleCalendarClient.events.delete({
       calendarId: googleCalendarId,
       eventId: agenda.googleEventId,
     });
 
-    // Update the database to reflect deletion
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -300,7 +277,6 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the successful operation
     await logSync(agenda.id, "delete", "SUCCESS");
   } catch (error: any) {
     const errorMessage =
@@ -343,7 +319,6 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
         );
       }
     } else {
-      // Update the agenda with DELETE_FAILED status
       try {
         await db.agenda.update({
           where: { id: agenda.id },
@@ -366,7 +341,6 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
         );
       }
 
-      // Log the failed operation
       await logSync(agenda.id, "delete", "FAILED", errorMessage as string);
 
       throw new GoogleCalendarError(
