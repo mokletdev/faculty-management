@@ -164,3 +164,7 @@ model SyncLog {
     @@index([agendaId])
     @@index([timestamp])
 }
+
+model GoogleCalendarShareable {
+    calendarId String @id @unique
+}
