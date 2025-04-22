@@ -38,7 +38,7 @@ export default function Footer() {
           </Typography>
           <div className="flex flex-col gap-8 xl:flex-row">
             {footerItems.map((i) => (
-              <Button key={i.name} asChild>
+              <Button key={i.name} variant={"ghost"} asChild>
                 <Link href={i.href} className="w-fit">
                   {i.name}
                 </Link>
@@ -49,14 +49,14 @@ export default function Footer() {
         <div className="flex h-full w-full flex-col items-start gap-8 xl:w-1/5">
           <div className="flex gap-3">
             {socialMedia.map((i) => (
-              <Button key={i.name} asChild>
+              <Button key={i.name} variant={"ghost"} asChild>
                 <Link target="_blank" href={i.href} className="h-6 w-6">
                   {i.icon}
                 </Link>
               </Button>
             ))}
           </div>
-          <Button asChild>
+          <Button variant={"ghost"} asChild>
             <Link href="mailto:loremipsum@gmail.com">
               <span className="inline-flex items-center gap-2">
                 loremipsum@gmail.com

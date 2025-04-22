@@ -39,7 +39,7 @@ export default function Navbar() {
           <div className="hidden items-center justify-between gap-[61px] xl:flex">
             <div className="flex gap-8">
               {navbarItems.map((item) => (
-                <Button key={item.name} asChild>
+                <Button key={item.name} variant={"ghost"} asChild>
                   <Link href={item.href}>{item.name}</Link>
                 </Button>
               ))}
@@ -65,7 +65,7 @@ export default function Navbar() {
         >
           <div className="flex flex-col items-center gap-8">
             {navbarItems.map((item) => (
-              <Button key={item.name} asChild>
+              <Button key={item.name} variant={"ghost"} asChild>
                 <Link href={item.href}>{item.name}</Link>
               </Button>
             ))}
