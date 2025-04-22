@@ -1,6 +1,6 @@
 import { Typography } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
-import type { JSX, MouseEventHandler } from "react";
+import type { JSX } from "react";
 
 interface CardProp {
   icon: JSX.Element;
