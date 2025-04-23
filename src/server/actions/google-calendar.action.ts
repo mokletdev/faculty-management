@@ -89,6 +89,7 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
     const googleCalendarId = await getGoogleCalendarId();
 
     const response = await googleCalendarClient.events.insert({
+      sendNotifications: true,
       calendarId: googleCalendarId,
       requestBody: event,
     });
@@ -192,6 +193,7 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
     const googleCalendarId = await getGoogleCalendarId();
 
     await googleCalendarClient.events.update({
+      sendNotifications: true,
       calendarId: googleCalendarId,
       eventId: agenda.googleEventId,
       requestBody: event,
