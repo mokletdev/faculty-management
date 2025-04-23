@@ -15,9 +15,11 @@ export const agendaSchema = z.object({
   priority: z.nativeEnum(Priority, {
     required_error: "Mohon pilih prioritas.",
   }),
-  roomId: z.string({
-    required_error: "Mohon pilih ruangan.",
-  }),
+  roomId: z
+    .string({
+      required_error: "Mohon pilih ruangan.",
+    })
+    .min(1),
   accessMahasiswa: z.boolean(),
   accessAllDosen: z.boolean(),
   accessDosen: z.array(z.string()).optional(),

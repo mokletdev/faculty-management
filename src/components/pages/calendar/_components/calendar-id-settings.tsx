@@ -207,7 +207,7 @@ export const CalendarSettingsForm = ({
               </ul>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between gap-4">
+          <CardFooter className="mt-6 flex justify-between gap-4">
             <Button type="button" variant="outline" onClick={resetForm}>
               <RefreshCw className="mr-2 h-4 w-4" />
               Reset
