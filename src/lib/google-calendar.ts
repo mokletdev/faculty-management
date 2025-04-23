@@ -5,7 +5,11 @@ const account = new google.auth.GoogleAuth({
   scopes: [
     "https://www.googleapis.com/auth/calendar",
     "https://www.googleapis.com/auth/calendar.events",
+    "https://www.googleapis.com/auth/admin.directory.resource.calendar",
   ],
+  clientOptions: {
+    subject: "teguhbayu.31@moklet.org",
+  },
 });
 
 google.options({ auth: account });
