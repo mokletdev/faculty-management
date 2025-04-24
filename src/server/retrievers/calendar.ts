@@ -15,7 +15,7 @@ import { db } from "../db";
  * @returns Promise resolving to an array of accessible agendas
  */
 export const getUserAgendas = async (
-  userId: string,
+  user?: { id: string; role: UserRole },
   options?: {
     startDate?: Date;
     endDate?: Date;
@@ -25,15 +25,6 @@ export const getUserAgendas = async (
     offset?: number;
   },
 ) => {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: { role: true },
-  });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
   const where: Prisma.AgendaWhereInput = {};
 
   if (options?.startDate) {
@@ -52,17 +43,14 @@ export const getUserAgendas = async (
     where.priority = options.priority;
   }
 
-  if (user.role !== UserRole.ADMIN) {
+  if (user?.role !== UserRole.ADMIN) {
     // For regular users (DOSEN), apply access control
     where.OR = [
-      // Agendas created by the user
-      { createdById: userId },
-
       // Agendas the user has explicit access to
-      { accessDosen: { some: { userId } } },
+      { accessDosen: { some: { userId: user?.id } } },
 
       // If the user is a DOSEN, they can see agendas with accessAllDosen=true
-      ...(user.role === UserRole.DOSEN ? [{ accessAllDosen: true }] : []),
+      ...(user?.role === UserRole.DOSEN ? [{ accessAllDosen: true }] : []),
     ];
   }
 
