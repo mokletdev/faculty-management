@@ -23,7 +23,9 @@
     "db:seed:user": "tsx prisma/seed/user.ts",
     "db:seed:room": "tsx prisma/seed/room.ts",
     "db:seed:calendar-shareable": "tsx prisma/seed/google-calendar-shareable.ts",
-    "db:seed:all": "pnpm db:seed:user && pnpm db:seed:room && pnpm db:seed:calendar-shareable"
+    "db:seed:group-shareable": "tsx prisma/seed/google-group-shareable.ts",
+    "db:seed:all": "pnpm db:seed:user && pnpm db:seed:room && pnpm db:seed:calendar-shareable && pnpm db:seed:group-shareable",
+    "db:reset": "prisma db push --force-reset && pnpm db:seed:all"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",
