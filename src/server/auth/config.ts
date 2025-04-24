@@ -43,7 +43,7 @@ declare module "next-auth/jwt" {
 export const authConfig = {
   session: { strategy: "jwt" },
   providers: [
-    Google,
+    Google({}),
     Credentials({
       name: "credentials",
       credentials: {
@@ -101,6 +101,15 @@ export const authConfig = {
     signIn: "/auth/login",
   },
   callbacks: {
+    async signIn({ account, profile }) {
+      if (account?.provider === "google") {
+        const existingUser = await db.user.findUnique({
+          where: { email: profile?.email as string },
+        });
+        if (!existingUser) return false;
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       // Only runs on sign-in
       if (user) {
