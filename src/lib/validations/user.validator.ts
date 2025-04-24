@@ -1,17 +1,5 @@
 import { z } from "zod";
 
-export const createUserSchema = z.object({
-  name: z.string().min(1, "Nama harus diisi").max(100, "Nama terlalu panjang"),
-  email: z.string().email("Email tidak valid"),
-  password: z.string().min(8, "Password minimal 8 karakter"),
-  role: z.enum(["ADMIN", "DOSEN"]),
-  image: z
-    .string()
-    .url("URL gambar tidak valid")
-    .or(z.string().length(0))
-    .optional(),
-});
-
 export const updateUserSchema = z.object({
   name: z.string().min(1, "Nama harus diisi").max(100, "Nama terlalu panjang"),
   email: z.string().email("Email tidak valid"),
@@ -85,5 +73,3 @@ export function validateUserData(data: BulkUserData[]): {
 export const userSchema = updateUserSchema;
 
 export type UserSchema = z.infer<typeof userSchema>;
-export type CreateUserSchema = z.infer<typeof createUserSchema>;
-export type UpdateUserSchema = z.infer<typeof updateUserSchema>;

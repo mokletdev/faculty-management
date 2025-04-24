@@ -39,6 +39,9 @@ enum SyncStatus {
     RATE_LIMITED
     DELETE_FAILED
     DELETED
+    GROUP_INVITE_PENDING
+    GROUP_INVITE_SENT
+    GROUP_INVITE_FAILED
 }
 
 // Necessary for Next auth
@@ -163,4 +166,14 @@ model SyncLog {
 
     @@index([agendaId])
     @@index([timestamp])
+}
+
+model GoogleCalendarShareable {
+    calendarId String @id
+}
+
+model GoogleGroupShareable {
+    groupEmail  String  @id
+    groupName   String?
+    description String?
 }

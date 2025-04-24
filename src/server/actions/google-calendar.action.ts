@@ -1,12 +1,26 @@
-import { googleCalendarClient, googleCalendarId } from "@/lib/google-calendar";
-import type { Prisma, SyncStatus } from "@prisma/client";
+import { googleCalendarClient } from "@/lib/googleapis";
+import { getGoogleCalendarId } from "@/server/retrievers/calendar";
+import type { Priority, Prisma, SyncStatus } from "@prisma/client";
+import type { calendar_v3 } from "googleapis";
 import { db } from "../db";
 
 type Agenda = Prisma.AgendaGetPayload<{
-  include: { room: { select: { name: true; location: true } } };
+  include: {
+    room: { select: { name: true; location: true } };
+    accessDosen: {
+      select: {
+        user: true;
+      };
+    };
+  };
 }>;
 
-// Custom error class for Google Calendar operations
+const agendaColorMap: Record<Priority, string> = {
+  HIGH: "11",
+  LOW: "10",
+  MEDIUM: "5 ",
+};
+
 export class GoogleCalendarError extends Error {
   constructor(
     message: string,
@@ -19,7 +33,6 @@ export class GoogleCalendarError extends Error {
   }
 }
 
-// Helper function to log sync operations
 const logSync = async (
   agendaId: string,
   operation: string,
@@ -38,7 +51,6 @@ const logSync = async (
 
 export const createGoogleCalendarEvent = async (agenda: Agenda) => {
   try {
-    // Update agenda to show sync is in progress
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -47,11 +59,16 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Create the event object
-    const event = {
+    const attendees: calendar_v3.Schema$EventAttendee[] =
+      agenda.accessDosen.map((dosen) => ({
+        displayName: dosen.user.name,
+        email: dosen.user.email,
+      }));
+
+    const event: calendar_v3.Schema$Event = {
       summary: agenda.title,
       description: agenda.description ?? "",
-      location: `Room: ${agenda.room.name}${agenda.room.location ? `, ${agenda.room.location}` : ""}`,
+      location: `Room: ${agenda.room.name}${agenda.room.location ? `(${agenda.room.location})` : ""}`,
       start: {
         dateTime: agenda.startTime.toISOString(),
         timeZone: "Asia/Jakarta",
@@ -65,15 +82,18 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
           agendaId: agenda.id,
         },
       },
+      colorId: agendaColorMap[agenda.priority],
+      attendees: attendees,
     };
 
-    // Make the API call to create the event
+    const googleCalendarId = await getGoogleCalendarId();
+
     const response = await googleCalendarClient.events.insert({
+      sendNotifications: true,
       calendarId: googleCalendarId,
       requestBody: event,
     });
 
-    // Update the agenda with the Google event ID and sync status
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -83,7 +103,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the successful operation
     await logSync(agenda.id, "create", "SUCCESS");
 
     return response.data.id;
@@ -98,7 +117,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     );
 
-    // Determine the appropriate sync status based on the error
     let syncStatus: SyncStatus = "FAILED";
     if (error.response?.status === 401 || error.response?.status === 403) {
       syncStatus = "AUTH_ERROR";
@@ -106,7 +124,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       syncStatus = "RATE_LIMITED";
     }
 
-    // Update the agenda with the error information
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -116,7 +133,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the failed operation
     await logSync(agenda.id, "create", "FAILED", errorMessage as string);
 
     throw new GoogleCalendarError(
@@ -130,7 +146,6 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
 
 export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
   try {
-    // Update agenda to show sync is in progress
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -138,8 +153,12 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
         lastSyncAttempt: new Date(),
       },
     });
+    const attendees: calendar_v3.Schema$EventAttendee[] =
+      agenda.accessDosen.map((dosen) => ({
+        displayName: dosen.user.name,
+        email: dosen.user.email,
+      }));
 
-    // If no Google event ID, create a new event instead
     if (!agenda.googleEventId) {
       await logSync(
         agenda.id,
@@ -150,11 +169,10 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       return await createGoogleCalendarEvent(agenda);
     }
 
-    // Create the event object for update
-    const event = {
+    const event: calendar_v3.Schema$Event = {
       summary: agenda.title,
       description: agenda.description ?? "",
-      location: `Room: ${agenda.room.name}${agenda.room.location ? `, ${agenda.room.location}` : ""}`,
+      location: `Room: ${agenda.room.name}${agenda.room.location ? `(${agenda.room.location})` : ""}`,
       start: {
         dateTime: agenda.startTime.toISOString(),
         timeZone: "Asia/Jakarta",
@@ -163,21 +181,24 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
         dateTime: agenda.endTime.toISOString(),
         timeZone: "Asia/Jakarta",
       },
+      colorId: agenda.priority ? agendaColorMap[agenda.priority] : undefined,
       extendedProperties: {
         private: {
           agendaId: agenda.id,
         },
       },
+      attendees,
     };
 
-    // Make the API call to update the event
+    const googleCalendarId = await getGoogleCalendarId();
+
     await googleCalendarClient.events.update({
+      sendNotifications: true,
       calendarId: googleCalendarId,
       eventId: agenda.googleEventId,
       requestBody: event,
     });
 
-    // Update the agenda with successful sync status
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -186,7 +207,6 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the successful operation
     await logSync(agenda.id, "update", "SUCCESS");
 
     return agenda.googleEventId;
@@ -212,13 +232,11 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       );
 
       try {
-        // Clear the Google event ID since it no longer exists
         await db.agenda.update({
           where: { id: agenda.id },
           data: { googleEventId: null },
         });
 
-        // Create a new event
         return await createGoogleCalendarEvent(agenda);
       } catch (createError) {
         await logSync(
@@ -237,7 +255,6 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       }
     }
 
-    // Determine the appropriate sync status based on the error
     let syncStatus: SyncStatus = "FAILED";
     if (error.response?.status === 401 || error.response?.status === 403) {
       syncStatus = "AUTH_ERROR";
@@ -245,7 +262,6 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       syncStatus = "RATE_LIMITED";
     }
 
-    // Update the agenda with the error information
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -255,7 +271,6 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the failed operation
     await logSync(agenda.id, "update", "FAILED", errorMessage as string);
 
     throw new GoogleCalendarError(
@@ -269,13 +284,11 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
 
 export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
   try {
-    // If no Google event ID, nothing to delete
     if (!agenda.googleEventId) {
       await logSync(agenda.id, "delete", "SKIPPED", "No Google event ID found");
       return;
     }
 
-    // Update agenda to show sync is in progress
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -284,13 +297,13 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Make the API call to delete the event
+    const googleCalendarId = await getGoogleCalendarId();
+
     await googleCalendarClient.events.delete({
       calendarId: googleCalendarId,
       eventId: agenda.googleEventId,
     });
 
-    // Update the database to reflect deletion
     await db.agenda.update({
       where: { id: agenda.id },
       data: {
@@ -300,7 +313,6 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
       },
     });
 
-    // Log the successful operation
     await logSync(agenda.id, "delete", "SUCCESS");
   } catch (error: any) {
     const errorMessage =
@@ -343,7 +355,6 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
         );
       }
     } else {
-      // Update the agenda with DELETE_FAILED status
       try {
         await db.agenda.update({
           where: { id: agenda.id },
@@ -366,7 +377,6 @@ export const deleteGoogleCalendarEvent = async (agenda: Agenda) => {
         );
       }
 
-      // Log the failed operation
       await logSync(agenda.id, "delete", "FAILED", errorMessage as string);
 
       throw new GoogleCalendarError(
@@ -403,6 +413,11 @@ export const retrySyncFailures = async (limit = 10): Promise<number> => {
           location: true,
         },
       },
+      accessDosen: {
+        select: {
+          user: true,
+        },
+      },
     },
   });
 
@@ -430,33 +445,4 @@ export const retrySyncFailures = async (limit = 10): Promise<number> => {
   }
 
   return successCount;
-};
-
-// Helper function to retry operations with exponential backoff
-export const withRetry = async <T>(
-  operation: () => Promise<T>,
-  maxRetries = 3,
-  initialDelay = 1000,
-): Promise<T> => {
-  let retries = 0;
-
-  while (true) {
-    try {
-      return await operation();
-    } catch (error: any) {
-      if (
-        retries >= maxRetries ||
-        !(error.response?.status === 429 || error.response?.status >= 500)
-      ) {
-        throw error;
-      }
-
-      retries++;
-      const delay = initialDelay * Math.pow(2, retries - 1);
-      console.log(
-        `Retrying operation after ${delay}ms (attempt ${retries} of ${maxRetries})`,
-      );
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-  }
 };

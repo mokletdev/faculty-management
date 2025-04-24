@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "prebuild": "pnpm db:seed:all",
     "check": "next lint && tsc --noEmit",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
@@ -20,7 +21,11 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "db:seed:user": "tsx prisma/seed/user.ts",
-    "db:seed:room": "tsx prisma/seed/room.ts"
+    "db:seed:room": "tsx prisma/seed/room.ts",
+    "db:seed:calendar-shareable": "tsx prisma/seed/google-calendar-shareable.ts",
+    "db:seed:group-shareable": "tsx prisma/seed/google-group-shareable.ts",
+    "db:seed:all": "pnpm db:seed:user && pnpm db:seed:room && pnpm db:seed:calendar-shareable && pnpm db:seed:group-shareable",
+    "db:reset": "prisma db push --force-reset && pnpm db:seed:all"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",
@@ -44,10 +49,12 @@
     "@radix-ui/react-tooltip": "^1.2.3",
     "@t3-oss/env-nextjs": "^0.12.0",
     "@tanstack/react-table": "^8.21.3",
+    "@types/nodemailer": "^6.4.17",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
     "googleapis": "^148.0.0",
     "immer": "^10.1.1",
     "lucide-react": "^0.488.0",
@@ -55,6 +62,7 @@
     "next": "^15.2.3",
     "next-auth": "5.0.0-beta.25",
     "next-themes": "^0.4.6",
+    "nodemailer": "^6.10.1",
     "papaparse": "^5.5.2",
     "react": "^19.0.0",
     "react-big-calendar": "^1.18.0",

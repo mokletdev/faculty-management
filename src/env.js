@@ -14,6 +14,7 @@ export const env = createEnv({
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
     GOOGLE_CALENDAR_ID: z.string(),
+    GOOGLE_GROUP_EMAIL: z.string().email(),
     DATABASE_URL: z.string().url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -38,6 +39,7 @@ export const env = createEnv({
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
     GOOGLE_CALENDAR_ID: process.env.GOOGLE_CALENDAR_ID,
+    GOOGLE_GROUP_EMAIL: process.env.GOOGLE_GROUP_EMAIL,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
   },

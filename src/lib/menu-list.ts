@@ -1,10 +1,4 @@
-import {
-  Calendar,
-  CalendarDays,
-  LayoutGrid,
-  User,
-  type LucideIcon,
-} from "lucide-react";
+import { Calendar, LayoutGrid, User, type LucideIcon } from "lucide-react";
 
 type Submenu = {
   href: string;
@@ -57,9 +51,19 @@ export function getMenuList(pathname: string): Group[] {
           ],
         },
         {
-          href: "/admin/calendar",
+          href: "",
           label: "Kalender",
-          icon: CalendarDays,
+          icon: Calendar,
+          submenus: [
+            {
+              href: "/admin/calendar",
+              label: "Preview Kalender",
+            },
+            {
+              href: "/admin/calendar-id",
+              label: "Konfigurasi Google Calendar",
+            },
+          ],
         },
       ],
     },

@@ -20,10 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  createUserSchema,
   updateUserSchema,
-  type CreateUserSchema,
-  type UpdateUserSchema,
+  type UserSchema,
 } from "@/lib/validations/user.validator";
 import { createUser, updateUser } from "@/server/actions/user.action";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,13 +47,9 @@ export const UserForm = ({ user }: UserFormProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Use different form types based on whether we're creating or updating
-  type FormValues = UserFormProps["user"] extends undefined
-    ? CreateUserSchema
-    : UpdateUserSchema;
-  const schema = user ? updateUserSchema : createUserSchema;
+  const schema = updateUserSchema;
 
-  const form = useForm<FormValues>({
+  const form = useForm<UserSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: user?.name ?? "",
@@ -63,10 +57,10 @@ export const UserForm = ({ user }: UserFormProps) => {
       password: "",
       role: user?.role ?? "DOSEN",
       image: user?.image ?? "",
-    } as FormValues,
+    } as UserSchema,
   });
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: UserSchema) {
     try {
       setIsSubmitting(true);
 
@@ -93,7 +87,7 @@ export const UserForm = ({ user }: UserFormProps) => {
         }
         toast.success("User berhasil diperbarui");
       } else {
-        const response = await createUser(values as CreateUserSchema);
+        const response = await createUser(values);
 
         if (response.error) {
           const { message, fieldErrors } = response.error;
@@ -181,7 +175,7 @@ export const UserForm = ({ user }: UserFormProps) => {
                   <FormLabel>
                     {user
                       ? "Password Baru (kosongkan jika tidak ingin mengubah)"
-                      : "Password"}
+                      : "Password (Optional)"}
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -195,7 +189,7 @@ export const UserForm = ({ user }: UserFormProps) => {
                   <FormDescription>
                     {user
                       ? "Biarkan kosong jika tidak ingin mengubah password"
-                      : "Password minimal 8 karakter dan wajib diisi untuk pengguna baru"}
+                      : "Password minimal 8 karakter jika diisi"}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
