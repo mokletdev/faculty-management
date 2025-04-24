@@ -17,12 +17,12 @@ export default function IntroductionSection() {
             weight={"regular"}
             className="max-w-[85%] text-center text-[18px] text-white xl:text-start"
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut iaculis
-            finibus enim, vestibulum ornare felis ornare non. Vivamus tincidunt
-            enim quis est fringilla, id rhoncus odio scelerisque.Lorem ipsum
-            dolor sit amet, consectetur adipiscing elit. Ut iaculis finibus
-            enim, vestibulum ornare felis ornare non. Vivamus tincidunt enim
-            quis est fringilla, id rhoncus odio scelerisque.
+            Sistem ini membantu mengelola agenda dan aktivitas fakultas secara
+            praktis dan efisien. Dilengkapi autentikasi aman, kalender
+            interaktif terintegrasi Google Calendar, fitur manajemen agenda
+            tanpa jadwal bentrok, serta notifikasi otomatis ke dosen. Semua bisa
+            diakses sesuai peran: Admin, Dosen, atau Mahasiswa. Kelola kegiatan
+            kampus jadi lebih mudah dan terorganisir!
           </Typography>
         </div>
         <Image

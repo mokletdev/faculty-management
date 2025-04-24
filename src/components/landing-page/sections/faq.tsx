@@ -6,20 +6,20 @@ import FAQCard from "../cards/faq-card";
 
 const contents = [
   {
-    header: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut iaculis finibus enim, vestibulum ornare felis ornare non.",
+    header: "Kenapa Faculty Event Management System ini dibutuhkan?",
+    body: "Karena kegiatan di fakultas sering kali padat dan bertumpuk, sistem ini hadir untuk menghindari bentrokan jadwal, mempermudah komunikasi, dan memastikan semua orang tahu apa yang sedang terjadi.",
   },
   {
-    header: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut iaculis finibus enim, vestibulum ornare felis ornare non.",
+    header: "Apakah mahasiswa bisa membuat atau mengedit agenda?",
+    body: "Tidak. Mahasiswa hanya bisa melihat agenda yang sudah dibuat. Hanya Admin yang memiliki akses untuk membuat, mengedit, atau menghapus jadwal.",
   },
   {
-    header: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut iaculis finibus enim, vestibulum ornare felis ornare non.",
+    header: "Apakah saya bisa melihat semua agenda fakultas?",
+    body: "Tergantung peran kamu. Beberapa agenda mungkin hanya bisa dilihat oleh dosen atau admin. Tapi agenda umum akan tampil di kalender dan bisa dilihat oleh semua pengguna yang relevan.",
   },
   {
-    header: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut iaculis finibus enim, vestibulum ornare felis ornare non.",
+    header: "Apakah jadwal di sistem ini terhubung dengan Google Calendar?",
+    body: "Ya! Kalender agenda dalam sistem ini terintegrasi langsung dengan Google Calendar, sehingga pengguna dapat melihat dan mengikuti jadwal fakultas dengan mudah dari perangkat apa pun.",
   },
 ];
 
@@ -41,8 +41,8 @@ export default function FAQSection() {
             Pertanyaan yang sering diajukan
           </Typography>
           <Typography variant={"body-base"} weight={"regular"}>
-            Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem
-            Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
+            Beberapa pertanyaan yang sering diajukan oleh beberapa orang terkait
+            dengan platform ini
           </Typography>
         </div>
         <div className="flex w-full flex-col gap-9 sm:w-[80%] xl:w-[60%]">
