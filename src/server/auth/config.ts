@@ -99,6 +99,7 @@ export const authConfig = {
   adapter: PrismaAdapter(db) as any,
   pages: {
     signIn: "/auth/login",
+    error: "/auth/error",
   },
   callbacks: {
     async signIn({ account, profile }) {
