@@ -1,5 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
+import type { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,8 +8,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import CrossIcon from "../icons/cross";
 import HamburgerIcon from "../icons/hamburger";
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Button } from "./button";
-import type { Session } from "next-auth";
 import { Typography } from "./typography";
 
 const navbarItems = [
@@ -64,17 +65,15 @@ export default function Navbar({ session }: { session?: Session | null }) {
                 </Button>
                 {isProfileViewed && (
                   <figure className="border-primary-200 absolute -bottom-28 left-0 flex aspect-[3/1] w-[242px] items-center justify-center gap-4 rounded-[12px] border bg-white px-7 py-[18px]">
-                    <Image
-                      src={
-                        session.user.image ??
-                        "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                      }
-                      alt={`Foto profil ${session.user.name}`}
-                      width={58}
-                      height={58}
-                      className="h-[58px] w-[58px] rounded-full object-cover"
-                      unoptimized
-                    />
+                    <Avatar className="size-14">
+                      <AvatarImage
+                        src={session?.user.image ?? "#"}
+                        alt="Avatar"
+                      />
+                      <AvatarFallback className="bg-transparent">
+                        {session?.user.name?.slice(0, 2)}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex flex-col items-start">
                       <Typography variant={"h5"}>
                         {session.user.name}
@@ -125,17 +124,12 @@ export default function Navbar({ session }: { session?: Session | null }) {
           {session ? (
             <div className="mt-10 flex w-full flex-col gap-4">
               <div className="border-primary-200 flex w-full items-center justify-start gap-4 rounded-[12px] border px-7 py-[18px]">
-                <Image
-                  src={
-                    session.user.image ??
-                    "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                  }
-                  alt={`Foto profil ${session.user.name}`}
-                  width={58}
-                  height={58}
-                  className="h-[58px] w-[58px] rounded-full object-cover"
-                  unoptimized
-                />
+                <Avatar className="size-14">
+                  <AvatarImage src={session?.user.image ?? "#"} alt="Avatar" />
+                  <AvatarFallback className="bg-transparent">
+                    {session?.user.name?.slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex flex-col items-start">
                   <Typography variant={"h5"}>{session.user.name}</Typography>
                   <Typography variant={"body-lg"}>

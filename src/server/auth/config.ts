@@ -43,7 +43,7 @@ declare module "next-auth/jwt" {
 export const authConfig = {
   session: { strategy: "jwt" },
   providers: [
-    Google({}),
+    Google({ allowDangerousEmailAccountLinking: true }),
     Credentials({
       name: "credentials",
       credentials: {
