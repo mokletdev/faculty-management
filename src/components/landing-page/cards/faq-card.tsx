@@ -22,7 +22,7 @@ export default function FAQCard({
       onClick={onClick}
       className={cn(
         "flex w-full gap-8 overflow-hidden rounded-lg bg-white p-6 drop-shadow-xl/25 drop-shadow-black transition-all duration-300 hover:cursor-pointer",
-        isExpanded ? "max-h-[300px]" : "max-h-[76px]",
+        isExpanded ? "max-h-[400px]" : "max-h-[80px]",
       )}
     >
       {isExpanded ? (
