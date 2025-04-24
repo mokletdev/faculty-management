@@ -1,5 +1,5 @@
-import { unauthorized } from "next/navigation";
+import { forbidden } from "next/navigation";
 
 export default function ErrorPage() {
-  return unauthorized();
+  return forbidden();
 }
