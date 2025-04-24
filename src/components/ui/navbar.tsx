@@ -1,13 +1,15 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CrossIcon from "../icons/cross";
 import HamburgerIcon from "../icons/hamburger";
 import { Button } from "./button";
+import type { Session } from "next-auth";
+import { Typography } from "./typography";
 
 const navbarItems = [
   { name: "Beranda", href: "/" },
@@ -15,12 +17,19 @@ const navbarItems = [
   { name: "FAQ", href: "/faq" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ session }: { session?: Session | null }) {
   const [isExpanded, setExpanded] = useState(false);
+  const [isProfileViewed, setProfileViewed] = useState(false);
   const currPath = usePathname();
   const isActive = (path: string) => {
     return currPath === path;
   };
+
+  useEffect(() => {
+    if (isProfileViewed) {
+      setProfileViewed(false);
+    }
+  }, [currPath]);
 
   return (
     <>
@@ -44,7 +53,50 @@ export default function Navbar() {
                 </Button>
               ))}
             </div>
-            <Button onClick={() => signIn()}>Login</Button>
+            {session ? (
+              <div className="relative flex gap-4">
+                <Button
+                  variant={"outline"}
+                  className="text-primary-800 border-primary-800 hover:text-primary-600"
+                  onClick={() => setProfileViewed(!isProfileViewed)}
+                >
+                  Lihat Profil
+                </Button>
+                {isProfileViewed && (
+                  <figure className="border-primary-200 absolute -bottom-28 left-0 flex aspect-[3/1] w-[242px] items-center justify-center gap-4 rounded-[12px] border bg-white px-7 py-[18px]">
+                    <Image
+                      src={
+                        session.user.image ??
+                        "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                      }
+                      alt={`Foto profil ${session.user.name}`}
+                      width={58}
+                      height={58}
+                      className="h-[58px] w-[58px] rounded-full object-cover"
+                      unoptimized
+                    />
+                    <div className="flex flex-col items-start">
+                      <Typography variant={"h5"}>
+                        {session.user.name}
+                      </Typography>
+                      <Typography variant={"body-lg"}>
+                        {session.user.role}
+                      </Typography>
+                    </div>
+                  </figure>
+                )}
+                <Button
+                  className="bg-red-500 text-white hover:bg-red-400"
+                  onClick={() => signOut()}
+                >
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Button className="" onClick={() => signIn()}>
+                Login
+              </Button>
+            )}
           </div>
           <button
             className="block xl:hidden"
@@ -70,9 +122,39 @@ export default function Navbar() {
               </Button>
             ))}
           </div>
-          <Button className="w-full" onClick={() => signIn()}>
-            Login
-          </Button>
+          {session ? (
+            <div className="mt-10 flex w-full flex-col gap-4">
+              <div className="border-primary-200 flex w-full items-center justify-start gap-4 rounded-[12px] border px-7 py-[18px]">
+                <Image
+                  src={
+                    session.user.image ??
+                    "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                  }
+                  alt={`Foto profil ${session.user.name}`}
+                  width={58}
+                  height={58}
+                  className="h-[58px] w-[58px] rounded-full object-cover"
+                  unoptimized
+                />
+                <div className="flex flex-col items-start">
+                  <Typography variant={"h5"}>{session.user.name}</Typography>
+                  <Typography variant={"body-lg"}>
+                    {session.user.role}
+                  </Typography>
+                </div>
+              </div>
+              <Button
+                className="w-full bg-red-500 text-white hover:bg-red-400"
+                onClick={() => signOut()}
+              >
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <Button className="w-full" onClick={() => signIn()}>
+              Login
+            </Button>
+          )}
         </div>
       </nav>
     </>
