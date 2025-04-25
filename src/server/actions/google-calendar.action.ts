@@ -68,7 +68,7 @@ export const createGoogleCalendarEvent = async (agenda: Agenda) => {
     const event: calendar_v3.Schema$Event = {
       summary: agenda.title,
       description: agenda.description ?? "",
-      location: `Room: ${agenda.room.name}${agenda.room.location ? `(${agenda.room.location})` : ""}`,
+      location: `Room: ${agenda.room.name}${agenda.room.location ? ` (${agenda.room.location})` : ""}`,
       start: {
         dateTime: agenda.startTime.toISOString(),
         timeZone: "Asia/Jakarta",
@@ -172,7 +172,7 @@ export const updateGoogleCalendarEvent = async (agenda: Agenda) => {
     const event: calendar_v3.Schema$Event = {
       summary: agenda.title,
       description: agenda.description ?? "",
-      location: `Room: ${agenda.room.name}${agenda.room.location ? `(${agenda.room.location})` : ""}`,
+      location: `Room: ${agenda.room.name}${agenda.room.location ? ` (${agenda.room.location})` : ""}`,
       start: {
         dateTime: agenda.startTime.toISOString(),
         timeZone: "Asia/Jakarta",

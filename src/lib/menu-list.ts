@@ -1,4 +1,11 @@
-import { Calendar, LayoutGrid, User, type LucideIcon } from "lucide-react";
+import {
+  Calendar,
+  Calendar1,
+  Group,
+  LayoutGrid,
+  User,
+  type LucideIcon,
+} from "lucide-react";
 
 type Submenu = {
   href: string;
@@ -53,7 +60,7 @@ export function getMenuList(pathname: string): Group[] {
         {
           href: "",
           label: "Kalender",
-          icon: Calendar,
+          icon: Calendar1,
           submenus: [
             {
               href: "/admin/calendar",
@@ -88,6 +95,11 @@ export function getMenuList(pathname: string): Group[] {
               label: "Tambah Massal",
             },
           ],
+        },
+        {
+          href: "/admin/group-email",
+          label: "Konfigurasi Google Group",
+          icon: Group,
         },
       ],
     },
