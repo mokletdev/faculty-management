@@ -103,9 +103,9 @@ export const authConfig = {
   },
   callbacks: {
     async signIn({ account, profile }) {
-      if (account?.provider === "google") {
+      if (account?.provider === "google" && profile?.email) {
         const existingUser = await db.user.findUnique({
-          where: { email: profile?.email as string },
+          where: { email: profile.email },
         });
         if (!existingUser) return false;
       }
