@@ -43,8 +43,10 @@ export const getUserAgendas = async (
     where.priority = options.priority;
   }
 
-  if (user?.role !== UserRole.ADMIN) {
-    // For regular users (DOSEN), apply access control
+  if (user?.role === undefined) {
+    where.accessMahasiswa = true;
+  } else if (user.role === "DOSEN") {
+    // For dosen users, apply access control
     where.OR = [
       // Agendas the user has explicit access to
       { accessDosen: { some: { userId: user?.id } } },
