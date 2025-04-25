@@ -8,6 +8,7 @@ Before starting the development process, you must seed your database with the fo
 pnpm db:seed:user
 pnpm db:seed:room
 pnpm db:seed:calendar-shareable
+pnpm db:seed:group-shareable
 ```
 
 or just
