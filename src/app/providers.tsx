@@ -15,7 +15,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         shallowRouting
       >
         {children}
-        <Toaster />
+        <Toaster position="top-center" richColors theme="light" />
       </ProgressProvider>
     </SessionProvider>
   );
