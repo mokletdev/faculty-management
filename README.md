@@ -25,7 +25,7 @@ You can build the project with:
 pnpm build
 ```
 
-This project was bootstrapped by create-t3-app ([https://create.t3.gg](https://create.t3.gg/))
+This project was bootstrapped with create-t3-app ([https://create.t3.gg](https://create.t3.gg/))
 
 ## Google APIs Setup (Service Account + Admin SDK + Calendar)
 
