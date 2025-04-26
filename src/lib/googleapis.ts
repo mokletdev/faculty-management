@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { google } from "googleapis";
 
 const account = new google.auth.GoogleAuth({
@@ -10,7 +11,7 @@ const account = new google.auth.GoogleAuth({
     "https://www.googleapis.com/auth/admin.directory.group.member",
   ],
   clientOptions: {
-    subject: "teguhbayu.31@moklet.org",
+    subject: env.GOOGLE_SUBJECT_EMAIL,
   },
 });
 

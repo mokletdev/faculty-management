@@ -31,6 +31,12 @@ const rooms = [
 
 async function seedRooms() {
   try {
+    const existingRoom = await client.room.findFirst();
+    if (existingRoom) {
+      console.log("There's already room data in the database.");
+      return;
+    }
+
     await client.room.createMany({
       data: rooms,
     });

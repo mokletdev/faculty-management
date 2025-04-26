@@ -3,6 +3,7 @@ import {
   Calendar1,
   Group,
   LayoutGrid,
+  School,
   User,
   type LucideIcon,
 } from "lucide-react";
@@ -69,6 +70,21 @@ export function getMenuList(pathname: string): Group[] {
             {
               href: "/admin/calendar-id",
               label: "Konfigurasi Google Calendar",
+            },
+          ],
+        },
+        {
+          href: "",
+          label: "Ruangan",
+          icon: School,
+          submenus: [
+            {
+              href: "/admin/room",
+              label: "Ringkasan Ruangan",
+            },
+            {
+              href: "/admin/room/new",
+              label: "Ruangan Baru",
             },
           ],
         },

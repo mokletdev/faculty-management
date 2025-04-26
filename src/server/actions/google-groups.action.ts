@@ -1,7 +1,7 @@
-import type { User } from "@prisma/client";
-import { db } from "../db";
-import type { admin_directory_v1 } from "googleapis";
 import { googleAdminDirectory } from "@/lib/googleapis";
+import type { User } from "@prisma/client";
+import type { admin_directory_v1 } from "googleapis";
+import { db } from "../db";
 import { getGoogleGroup } from "../retrievers/groups";
 
 export class GoogleGroupError extends Error {
@@ -228,7 +228,7 @@ export const batchAddUsersToGoogleGroup = async (
           if (user) {
             await logGroupOperation(
               user.id,
-              user.email || "unknown",
+              user.email ?? "unknown",
               "batch-add-to-group",
               "SUCCESS",
             );
@@ -323,7 +323,7 @@ export const retryFailedGroupInvites = async (limit = 10): Promise<number> => {
         where: { id: invite.agendaId },
       });
 
-      if (!user || !user.email) {
+      if (!user?.email) {
         console.log(`User not found or has no email: ${invite.agendaId}`);
         continue;
       }
