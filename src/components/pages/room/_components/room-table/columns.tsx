@@ -103,7 +103,7 @@ export const columns: ColumnDef<Room>[] = [
     },
     cell: ({ row }) => {
       const location: string | null = row.getValue("location");
-      return <div>{location || "Tidak ada"}</div>;
+      return <div>{location ?? "Tidak ada"}</div>;
     },
   },
   {

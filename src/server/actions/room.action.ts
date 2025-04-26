@@ -36,7 +36,7 @@ export async function createRoom(
     const room = await db.room.create({
       data: {
         name: validatedData.name,
-        location: validatedData.location || null,
+        location: validatedData.location ?? null,
       },
     });
 
@@ -108,7 +108,7 @@ export async function updateRoom(
       where: { id },
       data: {
         name: validatedData.name,
-        location: validatedData.location || null,
+        location: validatedData.location ?? null,
       },
     });
 

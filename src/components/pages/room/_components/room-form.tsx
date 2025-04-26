@@ -147,7 +147,7 @@ export const RoomForm = ({ room }: RoomFormProps) => {
                     <Input
                       placeholder="Masukkan lokasi ruangan (opsional)"
                       {...field}
-                      value={field.value || ""}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormDescription>
